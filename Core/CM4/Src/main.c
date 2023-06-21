@@ -18,19 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "adc.h"
-#include "eth.h"
-#include "hdmi_cec.h"
-#include "quadspi.h"
-#include "rtc.h"
-#include "sai.h"
-#include "sdmmc.h"
-#include "spdifrx.h"
-#include "spi.h"
 #include "tim.h"
-#include "usb_otg.h"
 #include "gpio.h"
-#include "fmc.h"
+#include "usart.h"
 #include "stm32h747i_discovery.h"
 
 
@@ -69,8 +59,6 @@ int main(void)
   /* Add Cortex-M4 user application code here */ 
   BSP_LED_Init(LED3);
   BSP_LED_On(LED3);
-  HAL_Delay(2000); 
-  BSP_LED_Off(LED3);
   
   /* CM4 takes HW semaphore 0 to inform CM7 that he finished his job */
   /* Do not forget to release the HW semaphore 0 once needed */
@@ -81,6 +69,9 @@ int main(void)
   // MX_RTC_Init();
   MX_UART8_Init();
 
+
+  HAL_Delay(200); 
+  BSP_LED_Off(LED3);
   osTaskInit();  // FreeRTOS
   // 程序如果运行到这里,RTOS出现了错误
   while (1)

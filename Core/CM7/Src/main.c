@@ -27,6 +27,7 @@
 #include "gpio.h"
 #include "tim.h"
 #include "stm32h747i_discovery.h"
+#include "quadspi.h"
 #include "button.h"
 #include "shell_port.h"
 
@@ -103,16 +104,19 @@ int main(void)
     Error_Handler();
   }
 
-  /* Initialize all configured peripherals */
-  MX_TIM2_Init();
-  MX_GPIO_Init();
-  MX_USART1_UART_Init();
-
-  /* Add Cortex-M7 user application code here */ 
   /* Initialize LED 1 */
   BSP_LED_Init(LED1);
   BSP_LED_Init(LED2);
   BSP_LED_Init(LED4);
+  BSP_LED_On(LED1);    // Start configure peripherals
+
+  /* Initialize all configured peripherals */
+  MX_TIM2_Init();
+  MX_GPIO_Init();
+  MX_USART1_UART_Init();
+  MX_QUADSPI_Init();
+
+  /* Add Cortex-M7 user application code here */ 
 
   /* CM7 waits for CM4 to finish his task and HW semaphore 0 becomes taken */
   while(HAL_HSEM_IsSemTaken(HSEM_ID_0) == 0)
@@ -120,12 +124,12 @@ int main(void)
   }
 
   /* Add CM7 Job here */
-  /* CM7 set LED 1 ON for 200 ms */
   User_Shell_Init();
-  BSP_LED_On(LED1);
+  ButtonAndJoykeyInit();
+
+  // LED 1 ON for 200 ms
   HAL_Delay(200); 
   BSP_LED_Off(LED1); 
-  ButtonAndJoykeyInit();
 
 
   osTaskInit();              // 创建RTOS任务

@@ -23,11 +23,16 @@
 #include "stm32h7xx_ll_usart.h"
 #include "stm32h7xx_ll_dma.h"
 
+#include "FreeRTOS.h"	         // FreeRTOS	  
+#include "task.h"                // FreeRTOS task
+
+
 /* USER CODE BEGIN 0 */
 #define INTER_FRM_SILENCE         (uint32_t)(11 * 3.5)      // 3.5 chars of 11 bits of INTER_FRM_SILENCE between frames
 #define INIT_FINISH_STR ("UART8 init finished.")
 #define STR_LEN (sizeof(INIT_FINISH_STR))
 #define COM8_RX_BLEN (256) 
+#define UART8_PERIOD   pdMS_TO_TICKS(5) // 发送等待延时为5ms
 
 /* USER CODE END 0 */
 
@@ -54,7 +59,7 @@ uint32_t u32DmaRxDataLen = 0;  // 每次启动DMA接收设定的接收数量
 void MX_UART8_Init(void)
 {
   huart8.Instance = UART8;
-  huart8.Init.BaudRate = 115200;
+  huart8.Init.BaudRate = 750000;
   huart8.Init.WordLength = UART_WORDLENGTH_8B;
   huart8.Init.StopBits = UART_STOPBITS_1;
   huart8.Init.Parity = UART_PARITY_NONE;
@@ -98,8 +103,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 
     /* UART8 clock enable */
     __HAL_RCC_UART8_CLK_ENABLE();
-
     __HAL_RCC_GPIOJ_CLK_ENABLE();
+    __HAL_RCC_DMA1_CLK_ENABLE();
     /**UART8 GPIO Configuration
     PJ9     ------> UART8_RX
     PJ8     ------> UART8_TX
@@ -351,5 +356,87 @@ uint8_t ReadOneByteFromBuff(char *data)
     return 1U;
 }
 
+typedef enum _UART_PROC {
+    UART_INIT = 0,
+    UART_TO_LISEN,
+    UART_LISEN,
+    UART_RX_PROCESS,
+    UART_TX_PREPARE,
+    UART_TX,
+    UART_WAIT_COMPLETE
+} UART_ProcStatus_t;
+
+typedef struct _Uart_Proc_handle {
+    UART_ProcStatus_t enSatusMathine; // 状态机
+    UART_HandleTypeDef *pUartx;       // UART句柄
+    uint8_t *pRxBuff;                 // 接收缓存地址
+    uint8_t *pTxBuff;                 // 发送缓存地址
+    uint8_t RxFinished;               // 接收一帧数据待处理
+    uint8_t TxProgress;               // 正在发送中
+    int16_t ReadIndex;                // 从接收缓存出栈索引
+    uint32_t RxDataCnt;               // 接收帧的数据长度
+    uint32_t TxDataCnt;               // 发送帧的数据长度
+} UART_ProcHandle_t;
+
+void UART8_ProcMachine(UART_ProcStatus_t *pStatus);
+// FreeRTOS task
+// Task period is 5ms
+void UART8_Task(void)
+{
+    UART_ProcStatus_t enStatus = UART_TO_LISEN;
+    while (1)
+    {
+        UART8_ProcMachine(&enStatus);
+        vTaskDelay(UART8_PERIOD);
+    }
+}
+
+// 当前的处理是: 把收到的内容发送回来
+void UART8_ProcMachine(UART_ProcStatus_t *pStatus)
+{
+    UART_ProcStatus_t enStatus = *pStatus;
+    switch (enStatus) {
+    case UART_TO_LISEN:
+        PutUart8ToLisen();
+        *pStatus = UART_LISEN;
+        break;
+
+    case UART_LISEN:
+        if (u8Uart8RxFinished != 0U) {
+            *pStatus = UART_RX_PROCESS;
+        }
+        break;
+
+    case UART_RX_PROCESS:
+        // 在这里对接收数据进行处理
+        u8Uart8RxFinished = 0U;
+        if (u8Uart8RxFinished == 0U) {
+            *pStatus = UART_TX_PREPARE;
+        }
+        break;
+
+    case UART_TX_PREPARE:
+        // 在这里把要回复的数据写入到发送缓存
+        *pStatus = UART_TX;
+        break;
+
+    case UART_TX:
+        // 调用发送处理函数
+        Uart_bSend_NonBlocking(&huart8, Com8RxBuff, u32RxDataCount);
+        u32RxDataCount = 0U;
+        *pStatus = UART_WAIT_COMPLETE;
+        break;
+
+    case UART_WAIT_COMPLETE:
+        if (u8Uart8TxProgress == 0U) {
+            *pStatus = UART_TO_LISEN;
+        }
+        break;
+
+    default:
+        *pStatus = UART_TO_LISEN;
+        break;
+    }
+}
 
 /* USER CODE END 1 */

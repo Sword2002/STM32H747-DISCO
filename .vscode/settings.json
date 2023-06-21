@@ -5,6 +5,10 @@
         "*.s": "c",
         "hdwitpriorities.h": "c",
         "freertos.h": "c",
-        "stm32h747i_discovery.h": "c"
+        "stm32h747i_discovery.h": "c",
+        "quadspi.h": "c",
+        "mt25tl01g_conf.h": "c",
+        "limits": "c",
+        "type_traits": "c"
     }
 }

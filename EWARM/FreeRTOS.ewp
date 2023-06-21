@@ -665,7 +665,7 @@
             <data>
                 <extensions></extensions>
                 <cmdline></cmdline>
-                <hasPrio>32</hasPrio>
+                <hasPrio>1</hasPrio>
                 <buildSequence>inputOutputBased</buildSequence>
             </data>
         </settings>
@@ -1415,6 +1415,7 @@
                     <state>$PROJ_DIR$/../Drivers/STM32H7xx_HAL_Driver/Inc</state>
                     <state>$PROJ_DIR$/../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy</state>
                     <state>$PROJ_DIR$/../Drivers/CMSIS/Device/ST/STM32H7xx/Include</state>
+                    <state>$PROJ_DIR$/../Drivers/Components</state>
                     <state>$PROJ_DIR$/../Drivers/CMSIS/Include</state>
                     <state>$PROJ_DIR$/../Drivers/BSP</state>
                     <state>$PROJ_DIR$/../RTOS/FreeRTOS/include</state>
@@ -2167,13 +2168,7 @@
                 <configuration>FreeRTOS_CM7</configuration>
             </excluded>
             <file>
-                <name>$PROJ_DIR$\..\Core\CM4\Src\eth.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\Core\CM4\Src\gpio.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Core\CM4\Src\hdmi_cec.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\CM4\Src\main.c</name>
@@ -2206,6 +2201,9 @@
                 <name>$PROJ_DIR$\..\Core\CM7\Src\main.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Core\CM7\Src\quadspi.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Core\CM7\Src\stm32h7xx_hal_msp.c</name>
             </file>
             <file>
@@ -2236,6 +2234,9 @@
                 </excluded>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Core\Common\Src\sharemen.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Core\Common\Src\system_stm32h7xx_dualcore_boot_cm4_cm7.c</name>
             </file>
         </group>
@@ -2247,17 +2248,23 @@
             <file>
                 <name>$PROJ_DIR$\..\Drivers\BSP\stm32h747i_discovery.c</name>
             </file>
+            <file>
+                <name>$PROJ_DIR$\..\Drivers\BSP\stm32h747i_discovery_qspi.c</name>
+                <excluded>
+                    <configuration>FreeRTOS_CM4</configuration>
+                </excluded>
+            </file>
+        </group>
+        <group>
+            <name>Components</name>
+            <file>
+                <name>$PROJ_DIR$\..\Drivers\Components\mt25ql512abb\mt25ql512abb.c</name>
+            </file>
         </group>
         <group>
             <name>STM32H7xx_HAL_Driver</name>
             <file>
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cec.c</name>
-                <excluded>
-                    <configuration>FreeRTOS_CM7</configuration>
-                </excluded>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cortex.c</name>
@@ -2267,18 +2274,6 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma_ex.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_eth.c</name>
-                <excluded>
-                    <configuration>FreeRTOS_CM7</configuration>
-                </excluded>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_eth_ex.c</name>
-                <excluded>
-                    <configuration>FreeRTOS_CM7</configuration>
-                </excluded>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_exti.c</name>
@@ -2302,9 +2297,6 @@
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c_ex.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mdma.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pcd.c</name>
                 <excluded>
                     <configuration>FreeRTOS_CM7</configuration>
@@ -2323,6 +2315,12 @@
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pwr_ex.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_qspi.c</name>
+                <excluded>
+                    <configuration>FreeRTOS_CM4</configuration>
+                </excluded>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rcc.c</name>
             </file>
             <file>
@@ -2336,18 +2334,6 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rtc_ex.c</name>
-                <excluded>
-                    <configuration>FreeRTOS_CM7</configuration>
-                </excluded>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sd.c</name>
-                <excluded>
-                    <configuration>FreeRTOS_CM7</configuration>
-                </excluded>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_sd_ex.c</name>
                 <excluded>
                     <configuration>FreeRTOS_CM7</configuration>
                 </excluded>
@@ -2392,18 +2378,6 @@
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_fmc.c</name>
                 <excluded>
                     <configuration>FreeRTOS_CM4</configuration>
-                    <configuration>FreeRTOS_CM7</configuration>
-                </excluded>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_sdmmc.c</name>
-                <excluded>
-                    <configuration>FreeRTOS_CM7</configuration>
-                </excluded>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_ll_usb.c</name>
-                <excluded>
                     <configuration>FreeRTOS_CM7</configuration>
                 </excluded>
             </file>

@@ -20,11 +20,9 @@
             "defines": [
                 "CORE_CM7",
                 "USE_HAL_DRIVER",
-                "STM32H747xx"
+                "STM32H747xx",
+                "__ICCARM__"
             ],
-            "compilerPath": "C:\\mingw64\\bin\\gcc.exe",
-            "cppStandard": "gnu++14",
-            "intelliSenseMode": "windows-gcc-x64"
         }
     ],
     "version": 4

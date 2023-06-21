@@ -10,6 +10,7 @@
 #include "semphr.h"		         // FreeRTOS semaphore
 #include "event_groups.h"		 // FreeRTOS event
 
+#include "main.h"
 #include "stm32h747i_discovery.h"
 #include "usart.h"
 
@@ -17,7 +18,6 @@
 
 static void AppTaskCreate(void);           /* 用于创建任务 */ 
 static void LED_Task(void);                /* LED_Task任务实现 */
-
 
 /**************************** 任务句柄 ********************************/
 /* 
@@ -43,24 +43,7 @@ TaskHandle_t LEDsTaskHandle;	      // LED任务句柄
  
 /******************************* 全局变量声明 ************************************/
  
-/**
-* @brief  Handles the tick increment
-* @param  none.
-* @retval none.
-*/
-extern void xPortSysTickHandler(void);
-void osSystickHandler(void)
-{
 
-#if (INCLUDE_xTaskGetSchedulerState  == 1 )
-  if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
-  {
-#endif  /* INCLUDE_xTaskGetSchedulerState */  
-    xPortSysTickHandler();
-#if (INCLUDE_xTaskGetSchedulerState  == 1 )
-  }
-#endif  /* INCLUDE_xTaskGetSchedulerState */  
-}
 
 /**********************************************************************
   * @ 函数名  ： LED_Task
@@ -70,10 +53,10 @@ void osSystickHandler(void)
   ********************************************************************/
 static void LED_Task(void)
 {	
-    uint8_t strBuff[64] = {0};
+    char strBuff[64] = {0};
     strcpy(strBuff, "Uart8 init success!\r\n");
-    //(void)Uart_bSend_NonBlocking(&huart8, (uint8_t *)strBuff, strlen(strBuff));
-    HAL_UART_Transmit(&huart8, (uint8_t *)strBuff, strlen(strBuff), 10);
+    (void)Uart_bSend_NonBlocking(&huart8, (uint8_t *)strBuff, strlen((const char *)strBuff));
+    //HAL_UART_Transmit(&huart8, (uint8_t *)strBuff, strlen(strBuff), 10);
     while (1)
     {
         BSP_LED_Toggle(LED3);      
@@ -100,6 +83,8 @@ void osTaskInit(void)
 	  if(pdPASS == result) {
         //printf("Task Start Success\r\n");
         vTaskStartScheduler();   // 启动任务，开启调度
+    } else {
+        Error_Handler();
     }
   
     while(1) {;} // 正常不会执行到这里
@@ -122,20 +107,61 @@ static void AppTaskCreate(void)
                           (uint16_t       )256,               //任务堆栈大小,单位是Word
                           (void*          )NULL,              //传递参数
                           (UBaseType_t    )3,                 //任务优先级,数字越小优先级越低,0:留给IdleTask
-                          (TaskHandle_t*  )&LEDsTaskHandle);	//任务句柄,如何后续不使用可以设置为NULL
+                          (TaskHandle_t*  )&LEDsTaskHandle);	//任务句柄,如果后续不使用可以设置为NULL
     
-    if(pdPASS == result) { // 创建成功
-      //printf2buffatinit("LED_Task Create Success\r\n");
+    if(pdFAIL == result) { // 创建失败
+        Error_Handler();
+    }
+
+    result = pdFAIL;
+    result = xTaskCreate( (TaskFunction_t )UART8_Task,
+                          (const char*    )"UART8_Task",
+                          (uint16_t       )256,
+                          (void*          )NULL,
+                          (UBaseType_t    )4,
+                          (TaskHandle_t*  )NULL);
+    
+    if(pdFAIL == result) { // 创建失败
+        Error_Handler();
     }
 
     vTaskDelete(AppTaskCreateHandle); //最后删除AppTaskCreate任务
     taskEXIT_CRITICAL();              //退出临界区
 }
 
-// 如果使能Tick hook, 就不能使用HAL层和Tick相关的API
-// 比如 HAL_Delay(x)
-//void vApplicationTickHook( void )
-//{
-    //HAL_IncTick();
-//}
 
+/**
+* @brief  Handles the tick increment
+* @param  none.
+* @retval none.
+*/
+extern void xPortSysTickHandler(void);
+// 如果使能Tick hook, 就不能使用HAL层和Tick相关的API
+#if (configUSE_TICK_HOOK == 1)
+void vApplicationTickHook( void )
+{
+#if (INCLUDE_xTaskGetSchedulerState  == 1 )
+  if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+  {
+#endif  /* INCLUDE_xTaskGetSchedulerState */  
+    xPortSysTickHandler();
+#if (INCLUDE_xTaskGetSchedulerState  == 1 )
+  }
+#endif  /* INCLUDE_xTaskGetSchedulerState */  
+}
+
+#else
+
+void osSystickHandler(void)
+{
+#if (INCLUDE_xTaskGetSchedulerState  == 1 )
+  if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+  {
+#endif  /* INCLUDE_xTaskGetSchedulerState */  
+    xPortSysTickHandler();
+#if (INCLUDE_xTaskGetSchedulerState  == 1 )
+  }
+#endif  /* INCLUDE_xTaskGetSchedulerState */  
+}
+
+#endif

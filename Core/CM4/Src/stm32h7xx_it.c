@@ -58,7 +58,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern CEC_HandleTypeDef hcec;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -229,7 +228,7 @@ void DMA1_Stream1_IRQHandler(void)
 
   /* USER CODE END DMA1_Stream1_IRQn 1 */
 }
-
+#if 0
 /**
   * @brief This function handles Ethernet global interrupt.
   */
@@ -257,7 +256,7 @@ void ETH_WKUP_IRQHandler(void)
 
   /* USER CODE END ETH_WKUP_IRQn 1 */
 }
-
+#endif
 /**
   * @brief This function handles UART8 global interrupt.
   */

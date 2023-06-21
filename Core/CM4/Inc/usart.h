@@ -48,7 +48,7 @@ uint8_t GetUart8TxStatus(void);
 uint8_t GetUart8TxStatus(void);
 uint8_t ReadOneByteFromBuff(char *data);
 void PutUart8ToLisen(void);
-
+void UART8_Task(void);
 /* USER CODE BEGIN Prototypes */
 
 /* USER CODE END Prototypes */

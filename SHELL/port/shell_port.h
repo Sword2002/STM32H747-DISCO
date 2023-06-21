@@ -12,13 +12,13 @@
 #ifndef __SHELL_PORT_H__
 #define __SHELL_PORT_H__
 
-//#include "shell.h"
+#include "shell.h"
 
-//extern Shell shell;
+extern Shell shell;
 
 void User_Shell_Init(void);
 void Shell_Task_Create(void);
-
+void user_shellprintf(char *str);
 
 
 

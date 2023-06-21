@@ -12,7 +12,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
-#include "shell.h"
+#include "shell_port.h"
 #include "usart.h"
 #include "debug_printf.h"
 #include "stm32h7xx.h"
@@ -219,6 +219,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     }
 }
 #endif
+
+
+void user_shellprintf(char *str)
+{
+    shellPrint(&shell, "%s", str);
+}
 
 //-----------------------------------------------------------------------------------
 //

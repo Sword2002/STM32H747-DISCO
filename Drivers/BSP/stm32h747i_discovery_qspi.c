@@ -167,9 +167,9 @@ int32_t BSP_QSPI_Init(uint32_t Instance, BSP_QSPI_Init_t *Init)
       if(ret == BSP_ERROR_NONE)
       {
         /* STM32 QSPI interface initialization */
-        (void)MT25TL01G_GetFlashInfo(&pInfo);
+        (void)MT25QL512ABB_GetFlashInfo(&pInfo);
         qspi_init.ClockPrescaler = PrescalerTab[Init->TransferRate];
-        qspi_init.DualFlashMode  = QSPI_DUALFLASH_ENABLE;
+        qspi_init.DualFlashMode  = BSP_QSPI_DUALFLASH_ENABLE;
         qspi_init.FlashSize      = (uint32_t)POSITION_VAL((uint32_t)pInfo.FlashSize) - 1U;
         qspi_init.SampleShifting = (Init->TransferRate == BSP_QSPI_STR_TRANSFER) ? QSPI_SAMPLE_SHIFTING_HALFCYCLE : QSPI_SAMPLE_SHIFTING_NONE;
 
@@ -181,11 +181,11 @@ int32_t BSP_QSPI_Init(uint32_t Instance, BSP_QSPI_Init_t *Init)
         {
           ret = BSP_ERROR_COMPONENT_FAILURE;
         }/* Force Flash enter 4 Byte address mode */
-        else if(MT25TL01G_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+        else if(MT25QL512ABB_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
         {
           ret = BSP_ERROR_COMPONENT_FAILURE;
         }
-        else if(MT25TL01G_Enter4BytesAddressMode(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+        else if(MT25QL512ABB_Enter4BytesAddressMode(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25QL512ABB_OK)
         {
           ret = BSP_ERROR_COMPONENT_FAILURE;
         }/* Configuration of the dummy cycles on QSPI memory side */
@@ -239,7 +239,7 @@ int32_t BSP_QSPI_DeInit(uint32_t Instance)
       QSPI_Ctx[Instance].IsInitialized = QSPI_ACCESS_NONE;
       QSPI_Ctx[Instance].InterfaceMode = BSP_QSPI_SPI_MODE;
       QSPI_Ctx[Instance].TransferRate  = BSP_QSPI_STR_TRANSFER;
-      QSPI_Ctx[Instance].DualFlashMode = QSPI_DUALFLASH_ENABLE;
+      QSPI_Ctx[Instance].DualFlashMode = BSP_QSPI_DUALFLASH_ENABLE;
 
 #if (USE_HAL_QSPI_REGISTER_CALLBACKS == 0)
       QSPI_MspDeInit(&hqspi);
@@ -374,14 +374,14 @@ int32_t BSP_QSPI_Read(uint32_t Instance, uint8_t *pData, uint32_t ReadAddr, uint
   {
     if(QSPI_Ctx[Instance].TransferRate == BSP_QSPI_STR_TRANSFER)
     {
-      if(MT25TL01G_ReadSTR(&hqspi, QSPI_Ctx[Instance].InterfaceMode, pData, ReadAddr, Size) != MT25TL01G_OK)
+      if(MT25QL512ABB_ReadSTR(&hqspi, QSPI_Ctx[Instance].InterfaceMode, BSP_QSPI_ADD_4BYTE, pData, ReadAddr, Size) != MT25QL512ABB_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }
     }
     else
     {
-      if(MT25TL01G_ReadDTR(&hqspi, QSPI_Ctx[Instance].InterfaceMode, pData, ReadAddr, Size) != MT25TL01G_OK)
+      if(MT25QL512ABB_ReadDTR(&hqspi, QSPI_Ctx[Instance].InterfaceMode, BSP_QSPI_ADD_4BYTE, pData, ReadAddr, Size) != MT25QL512ABB_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }
@@ -414,7 +414,7 @@ int32_t BSP_QSPI_Write(uint32_t Instance, uint8_t *pData, uint32_t WriteAddr, ui
   else
   {
     /* Calculation of the size between the write address and the end of the page */
-    current_size = MT25TL01G_PAGE_SIZE - (WriteAddr % MT25TL01G_PAGE_SIZE);
+    current_size = MT25QL512ABB_PAGE_SIZE - (WriteAddr % MT25QL512ABB_PAGE_SIZE);
 
     /* Check if the size of the data is less than the remaining place in the page */
     if (current_size > Size)
@@ -431,19 +431,19 @@ int32_t BSP_QSPI_Write(uint32_t Instance, uint8_t *pData, uint32_t WriteAddr, ui
     do
     {
       /* Check if Flash busy ? */
-      if(MT25TL01G_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+      if(MT25QL512ABB_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }/* Enable write operations */
-      else if(MT25TL01G_WriteEnable(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+      else if(MT25QL512ABB_WriteEnable(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }/* Issue page program command */
-      else if(MT25TL01G_PageProgram(&hqspi, QSPI_Ctx[Instance].InterfaceMode, write_data, current_addr, current_size) != MT25TL01G_OK)
+      else if(MT25QL512ABB_PageProgram(&hqspi, QSPI_Ctx[Instance].InterfaceMode, BSP_QSPI_ADD_4BYTE, write_data, current_addr, current_size) != MT25QL512ABB_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }/* Configure automatic polling mode to wait for end of program */
-      else if (MT25TL01G_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+      else if (MT25QL512ABB_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }
@@ -452,7 +452,7 @@ int32_t BSP_QSPI_Write(uint32_t Instance, uint8_t *pData, uint32_t WriteAddr, ui
         /* Update the address and size variables for next page programming */
         current_addr += current_size;
         write_data += current_size;
-        current_size = ((current_addr + MT25TL01G_PAGE_SIZE) > end_addr) ? (end_addr - current_addr) : MT25TL01G_PAGE_SIZE;
+        current_size = ((current_addr + MT25QL512ABB_PAGE_SIZE) > end_addr) ? (end_addr - current_addr) : MT25QL512ABB_PAGE_SIZE;
       }
     } while ((current_addr < end_addr) && (ret == BSP_ERROR_NONE));
   }
@@ -482,18 +482,18 @@ int32_t BSP_QSPI_EraseBlock(uint32_t Instance, uint32_t BlockAddress, BSP_QSPI_E
   else
   {
     /* Check Flash busy ? */
-    if(MT25TL01G_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+    if(MT25QL512ABB_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
     {
       ret = BSP_ERROR_COMPONENT_FAILURE;
     }/* Enable write operations */
-    else if(MT25TL01G_WriteEnable(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+    else if(MT25QL512ABB_WriteEnable(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
     {
       ret = BSP_ERROR_COMPONENT_FAILURE;
     }
     else
     {
       /* Issue Block Erase command */
-      if(MT25TL01G_BlockErase(&hqspi, QSPI_Ctx[Instance].InterfaceMode, BlockAddress, (MT25TL01G_Erase_t)BlockSize) != MT25TL01G_OK)
+      if(MT25QL512ABB_BlockErase(&hqspi, QSPI_Ctx[Instance].InterfaceMode, BSP_QSPI_ADD_4BYTE, BlockAddress, (MT25QL512ABB_Erase_t)BlockSize) != MT25QL512ABB_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }
@@ -521,18 +521,18 @@ int32_t BSP_QSPI_EraseChip(uint32_t Instance)
   else
   {
     /* Check Flash busy ? */
-    if(MT25TL01G_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+    if(MT25QL512ABB_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
     {
       ret = BSP_ERROR_COMPONENT_FAILURE;
     }/* Enable write operations */
-    else if (MT25TL01G_WriteEnable(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+    else if (MT25QL512ABB_WriteEnable(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
     {
       ret = BSP_ERROR_COMPONENT_FAILURE;
     }
     else
     {
       /* Issue Chip erase command */
-      if(MT25TL01G_ChipErase(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+      if(MT25QL512ABB_ChipErase(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25QL512ABB_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }
@@ -561,14 +561,14 @@ int32_t BSP_QSPI_GetStatus(uint32_t Instance)
   }
   else
   {
-    if(MT25TL01G_ReadStatusRegister(&hqspi, QSPI_Ctx[Instance].InterfaceMode, &reg) != MT25TL01G_OK)
+    if(MT25QL512ABB_ReadStatusRegister(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode, &reg) != MT25QL512ABB_OK)
     {
       ret = BSP_ERROR_COMPONENT_FAILURE;
     }
     else
     {
       /* Check the value of the register */
-      if ((reg & MT25TL01G_SR_WIP) != 0U)
+      if ((reg & MT25QL512ABB_SR_WIP) != 0U)
       {
         ret = BSP_ERROR_BUSY;
       }
@@ -596,7 +596,7 @@ int32_t BSP_QSPI_GetInfo(uint32_t Instance, BSP_QSPI_Info_t *pInfo)
   }
   else
   {
-    (void)MT25TL01G_GetFlashInfo(pInfo);
+    (void)MT25QL512ABB_GetFlashInfo(pInfo);
   }
 
   /* Return BSP status */
@@ -622,7 +622,7 @@ int32_t BSP_QSPI_EnableMemoryMappedMode(uint32_t Instance)
   {
     if(QSPI_Ctx[Instance].TransferRate == BSP_QSPI_STR_TRANSFER)
     {
-      if(MT25TL01G_EnableMemoryMappedModeSTR(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+      if(MT25QL512ABB_EnableMemoryMappedModeSTR(&hqspi, QSPI_Ctx[Instance].InterfaceMode, BSP_QSPI_ADD_4BYTE) != MT25QL512ABB_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }
@@ -633,7 +633,7 @@ int32_t BSP_QSPI_EnableMemoryMappedMode(uint32_t Instance)
     }
     else
     {
-      if(MT25TL01G_EnableMemoryMappedModeDTR(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+      if(MT25QL512ABB_EnableMemoryMappedModeDTR(&hqspi, QSPI_Ctx[Instance].InterfaceMode, BSP_QSPI_ADD_4BYTE) != MT25QL512ABB_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }
@@ -684,7 +684,7 @@ int32_t BSP_QSPI_DisableMemoryMappedMode(uint32_t Instance)
         ret = BSP_ERROR_PERIPH_FAILURE;
       }
       /* Dummy read for exit from Performance Enhance mode */
-      else if(MT25TL01G_ReadSTR(&hqspi, QSPI_Ctx[Instance].InterfaceMode, &Dummy, 0, 1) != MT25TL01G_OK)
+      else if(MT25QL512ABB_ReadSTR(&hqspi, QSPI_Ctx[Instance].InterfaceMode, BSP_QSPI_ADD_4BYTE, &Dummy, 0, 1) != MT25QL512ABB_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }
@@ -716,7 +716,7 @@ int32_t BSP_QSPI_ReadID(uint32_t Instance, uint8_t *Id)
   }
   else
   {
-    if(MT25TL01G_ReadID(&hqspi, QSPI_Ctx[Instance].InterfaceMode, Id) != MT25TL01G_OK)
+    if(MT25QL512ABB_ReadID(&hqspi, QSPI_Ctx[Instance].InterfaceMode, Id, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
     {
       ret = BSP_ERROR_COMPONENT_FAILURE;
     }
@@ -765,10 +765,10 @@ int32_t BSP_QSPI_ConfigFlash(uint32_t Instance, BSP_QSPI_Interface_t Mode, BSP_Q
         /* Setup Flash interface ***************************************************/
         switch(QSPI_Ctx[Instance].InterfaceMode)
         {
-        case MT25TL01G_QPI_MODE :               /* 4-4-4 commands */
-          if(Mode != MT25TL01G_QPI_MODE)
+        case MT25QL512ABB_QPI_MODE :               /* 4-4-4 commands */
+          if(Mode != MT25QL512ABB_QPI_MODE)
           {
-            if(MT25TL01G_ExitQPIMode(&hqspi) != MT25TL01G_OK)
+            if(MT25QL512ABB_ExitQPIMode(&hqspi) != MT25QL512ABB_OK)
             {
               ret = BSP_ERROR_COMPONENT_FAILURE;
             }
@@ -779,9 +779,9 @@ int32_t BSP_QSPI_ConfigFlash(uint32_t Instance, BSP_QSPI_Interface_t Mode, BSP_Q
         case BSP_QSPI_SPI_2IO_MODE :           /* 1-2-2 read commands */
         case BSP_QSPI_SPI_4IO_MODE :           /* 1-4-4 read commands */
         default :
-          if(Mode == MT25TL01G_QPI_MODE)
+          if(Mode == MT25QL512ABB_QPI_MODE)
           {
-            if(MT25TL01G_EnterQPIMode(&hqspi) != MT25TL01G_OK)
+            if(MT25QL512ABB_EnterQPIMode(&hqspi) != MT25QL512ABB_OK)
             {
               ret = BSP_ERROR_COMPONENT_FAILURE;
             }
@@ -950,23 +950,23 @@ static int32_t QSPI_ResetMemory(uint32_t Instance)
   int32_t ret = BSP_ERROR_NONE;
 
   /* Send RESET ENABLE command in QPI mode (QUAD I/Os, 4-4-4) */
-  if(MT25TL01G_ResetEnable(&hqspi, MT25TL01G_QPI_MODE) != MT25TL01G_OK)
+  if(MT25QL512ABB_ResetEnable(&hqspi, MT25QL512ABB_QPI_MODE) != MT25QL512ABB_OK)
   {
     ret =BSP_ERROR_COMPONENT_FAILURE;
   }/* Send RESET memory command in QPI mode (QUAD I/Os, 4-4-4) */
-  else if(MT25TL01G_ResetMemory(&hqspi, MT25TL01G_QPI_MODE) != MT25TL01G_OK)
+  else if(MT25QL512ABB_ResetMemory(&hqspi, MT25QL512ABB_QPI_MODE) != MT25QL512ABB_OK)
   {
     ret = BSP_ERROR_COMPONENT_FAILURE;
   }/* Wait Flash ready */
-  else if(MT25TL01G_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+  else if(MT25QL512ABB_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
   {
     ret = BSP_ERROR_COMPONENT_FAILURE;
   }/* Send RESET ENABLE command in SPI mode (1-1-1) */
-  else if(MT25TL01G_ResetEnable(&hqspi, BSP_QSPI_SPI_MODE) != MT25TL01G_OK)
+  else if(MT25QL512ABB_ResetEnable(&hqspi, BSP_QSPI_SPI_MODE) != MT25QL512ABB_OK)
   {
     ret = BSP_ERROR_COMPONENT_FAILURE;
   }/* Send RESET memory command in SPI mode (1-1-1) */
-  else if(MT25TL01G_ResetMemory(&hqspi, BSP_QSPI_SPI_MODE) != MT25TL01G_OK)
+  else if(MT25QL512ABB_ResetMemory(&hqspi, BSP_QSPI_SPI_MODE) != MT25QL512ABB_OK)
   {
     ret = BSP_ERROR_COMPONENT_FAILURE;
   }
@@ -995,7 +995,7 @@ static int32_t QSPI_DummyCyclesCfg(uint32_t Instance)
 
   /* Initialize the read volatile configuration register command */
   s_command.InstructionMode   = QSPI_INSTRUCTION_4_LINES;
-  s_command.Instruction       = MT25TL01G_READ_VOL_CFG_REG_CMD;
+  s_command.Instruction       = MT25QL512ABB_READ_VOL_CFG_REG_CMD;
   s_command.AddressMode       = QSPI_ADDRESS_NONE;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
   s_command.DataMode          = QSPI_DATA_4_LINES;
@@ -1018,15 +1018,15 @@ static int32_t QSPI_DummyCyclesCfg(uint32_t Instance)
   }
 
   /* Enable write operations */
-  if (MT25TL01G_WriteEnable(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != MT25TL01G_OK)
+  if (MT25QL512ABB_WriteEnable(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
   {
     return BSP_ERROR_COMPONENT_FAILURE;
   }
 
   /* Update volatile configuration register (with new dummy cycles) */
-  s_command.Instruction = MT25TL01G_WRITE_VOL_CFG_REG_CMD;
-  MODIFY_REG(reg, 0xF0F0, ((MT25TL01G_DUMMY_CYCLES_READ_QUAD << 4) |
-                               (MT25TL01G_DUMMY_CYCLES_READ_QUAD << 12)));
+  s_command.Instruction = MT25QL512ABB_WRITE_VOL_CFG_REG_CMD;
+  MODIFY_REG(reg, 0xF0F0, ((MT25QL512ABB_DUMMY_CYCLES_READ_QUAD << 4) |
+                               (MT25QL512ABB_DUMMY_CYCLES_READ_QUAD << 12)));
 
   /* Configure the write volatile configuration register command */
   if (HAL_QSPI_Command(&hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
