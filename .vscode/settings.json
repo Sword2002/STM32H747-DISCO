@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "*.ic": "c",
+        "*.ih": "c",
+        "*.s": "c",
+        "hdwitpriorities.h": "c",
+        "freertos.h": "c",
+        "stm32h747i_discovery.h": "c"
+    }
+}

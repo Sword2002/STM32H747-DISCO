@@ -1,7 +1,7 @@
 .vscod/
 EWARM/FreeRTOS_CM4/
 EWARM/FreeRTOS_CM7/
-EWARM/setting/
+EWARM/settings/
 
 # Prerequisites
 *.d
