@@ -958,7 +958,7 @@ static int32_t QSPI_ResetMemory(uint32_t Instance)
   {
     ret = BSP_ERROR_COMPONENT_FAILURE;
   }/* Wait Flash ready */
-  else if(MT25QL512ABB_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode, QSPI_Ctx[Instance].DualFlashMode) != MT25QL512ABB_OK)
+  else if(MT25QL512ABB_AutoPollingMemReady(&hqspi, MT25QL512ABB_QPI_MODE, BSP_QSPI_DUALFLASH_ENABLE) != MT25QL512ABB_OK)
   {
     ret = BSP_ERROR_COMPONENT_FAILURE;
   }/* Send RESET ENABLE command in SPI mode (1-1-1) */

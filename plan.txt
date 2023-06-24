@@ -33,6 +33,10 @@ STM32H747I-DISCO学习步骤：
 
 9. 集成文件系统
 10. 在外扩FLASH上实现文件读写
+    1). 熟悉SPI/DSPI/QSPI
+    2). 通过QSPI对MT25QL实现读写
+    3). 优化QSPI的性能
+
 11. 在EEPROM上实现文件读写                         没有EEPROM
 12. 理解STM32H747的HSEM的工作原理，硬件信号量       OK
 13. 实现RTC

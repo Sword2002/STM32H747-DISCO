@@ -38,10 +38,10 @@
 #define CONF_QSPI_DUMMY_CLOCK                 8U
 
 /* Dummy cycles for STR read mode */
-#define MT25QL512ABB_DUMMY_CYCLES_READ           8U
-#define MT25QL512ABB_DUMMY_CYCLES_READ_QUAD      8U
+#define MT25QL512ABB_DUMMY_CYCLES_READ           10U
+#define MT25QL512ABB_DUMMY_CYCLES_READ_QUAD      10U
 /* Dummy cycles for DTR read mode */
-#define MT25QL512ABB_DUMMY_CYCLES_READ_DTR       6U
+#define MT25QL512ABB_DUMMY_CYCLES_READ_DTR       8U
 #define MT25QL512ABB_DUMMY_CYCLES_READ_QUAD_DTR  8U
 
 
