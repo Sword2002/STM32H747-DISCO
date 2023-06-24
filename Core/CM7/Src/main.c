@@ -114,7 +114,7 @@ int main(void)
   MX_TIM2_Init();
   MX_GPIO_Init();
   MX_USART1_UART_Init();
-  MX_QUADSPI_Init();
+  //MX_QUADSPI_Init();
 
   /* Add Cortex-M7 user application code here */ 
 
