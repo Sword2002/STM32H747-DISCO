@@ -2934,6 +2934,9 @@
                 <name>$PROJ_DIR$\..\Drivers\BSP\stm32h747i_discovery.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Drivers\BSP\stm32h747i_discovery_mt25ql_qspi.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Drivers\BSP\stm32h747i_discovery_qspi.c</name>
             </file>
         </group>
@@ -2941,6 +2944,9 @@
             <name>Components</name>
             <file>
                 <name>$PROJ_DIR$\..\Drivers\Components\mt25ql512abb\mt25ql512abb.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Drivers\Components\mt25tl01g\mt25tl01g.c</name>
             </file>
         </group>
         <group>

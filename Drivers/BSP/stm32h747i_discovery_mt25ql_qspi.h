@@ -27,7 +27,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h747i_discovery_conf.h"
 #include "stm32h747i_discovery_errno.h"
-#include "../Components/mt25tl01g/mt25tl01g.h"
+#include "../Components/mt25ql512abb/mt25ql512abb.h"
 
 /** @addtogroup BSP
   * @{
@@ -44,18 +44,19 @@
 /** @defgroup STM32H747I_DISCO_QSPI_Exported_Types Exported Types
   * @{
   */
-#define BSP_QSPI_Info_t                 MT25TL01G_Info_t
-#define BSP_QSPI_Interface_t            MT25TL01G_Interface_t
-#define BSP_QSPI_Transfer_t             MT25TL01G_Transfer_t
-#define BSP_QSPI_DualFlash_t            MT25TL01G_DualFlash_t
-#define BSP_QSPI_ODS_t                  MT25TL01G_ODS_t
+#define BSP_QSPI_Info_t                 MT25QL512ABB_Info_t
+#define BSP_QSPI_Interface_t            MT25QL512ABB_Interface_t
+#define BSP_QSPI_Transfer_t             MT25QL512ABB_Transfer_t
+#define BSP_QSPI_DualFlash_t            MT25QL512ABB_DualFlash_t
+#define BSP_QSPI_ODS_t                  MT25QL512ABB_ODS_t
+#define BSP_QSPI_AddSize_t              MT25QL512ABB_AddressSize_t
 
 typedef enum
 {
-  BSP_QSPI_ERASE_8K   =  MT25TL01G_ERASE_4K ,       /*!< 8K size Sector erase = 2 x 4K as Dual flash mode is used for this board   */
-  BSP_QSPI_ERASE_64K  =  MT25TL01G_ERASE_32K ,      /*!< 64K size Sector erase = 2 x 32K as Dual flash mode is used for this board */
-  BSP_QSPI_ERASE_128K =  MT25TL01G_ERASE_64K ,      /*!< 128K size Sector erase = 2 x 64K as Dual mode is used for this board      */
-  BSP_QSPI_ERASE_CHIP =  MT25TL01G_ERASE_CHIP       /*!< Whole chip erase */
+  BSP_QSPI_ERASE_8K   =  MT25QL512ABB_ERASE_4K ,       /*!< 8K size Sector erase = 2 x 4K as Dual flash mode is used for this board   */
+  BSP_QSPI_ERASE_64K  =  MT25QL512ABB_ERASE_32K ,      /*!< 64K size Sector erase = 2 x 32K as Dual flash mode is used for this board */
+  BSP_QSPI_ERASE_128K =  MT25QL512ABB_ERASE_64K ,      /*!< 128K size Sector erase = 2 x 64K as Dual mode is used for this board      */
+  BSP_QSPI_ERASE_CHIP =  MT25QL512ABB_ERASE_BULK       /*!< Whole chip erase */
 
 } BSP_QSPI_Erase_t;
 
@@ -109,27 +110,33 @@ typedef struct
 #define QSPI_INSTANCES_NUMBER         1U
 
 /* Definition for QSPI modes */
-#define BSP_QSPI_SPI_MODE            (BSP_QSPI_Interface_t)MT25TL01G_SPI_MODE      /* 1 Cmd Line, 1 Address Line and 1 Data Line    */
-#define BSP_QSPI_SPI_1I2O_MODE       (BSP_QSPI_Interface_t)MT25TL01G_SPI_1I2O_MODE /* 1 Cmd Line, 1 Address Line and 2 Data Lines   */
-#define BSP_QSPI_SPI_2IO_MODE        (BSP_QSPI_Interface_t)MT25TL01G_SPI_2IO_MODE  /* 1 Cmd Line, 2 Address Lines and 2 Data Lines  */
-#define BSP_QSPI_SPI_1I4O_MODE       (BSP_QSPI_Interface_t)MT25TL01G_SPI_1I4O_MODE /* 1 Cmd Line, 1 Address Line and 4 Data Lines   */
-#define BSP_QSPI_SPI_4IO_MODE        (BSP_QSPI_Interface_t)MT25TL01G_SPI_4IO_MODE  /* 1 Cmd Line, 4 Address Lines and 4 Data Lines  */
-#define BSP_QSPI_DPI_MODE            (BSP_QSPI_Interface_t)MT25TL01G_DPI_MODE      /* 2 Cmd Lines, 2 Address Lines and 2 Data Lines */
-#define BSP_QSPI_QPI_MODE            (BSP_QSPI_Interface_t)MT25TL01G_QPI_MODE      /* 4 Cmd Lines, 4 Address Lines and 4 Data Lines */
+#define BSP_QSPI_SPI_MODE            (BSP_QSPI_Interface_t)MT25QL512ABB_SPI_MODE      /* 1 Cmd Line, 1 Address Line and 1 Data Line    */
+#define BSP_QSPI_SPI_1I2O_MODE       (BSP_QSPI_Interface_t)MT25QL512ABB_SPI_1I2O_MODE /* 1 Cmd Line, 1 Address Line and 2 Data Lines   */
+#define BSP_QSPI_SPI_2IO_MODE        (BSP_QSPI_Interface_t)MT25QL512ABB_SPI_2IO_MODE  /* 1 Cmd Line, 2 Address Lines and 2 Data Lines  */
+#define BSP_QSPI_SPI_1I4O_MODE       (BSP_QSPI_Interface_t)MT25QL512ABB_SPI_1I4O_MODE /* 1 Cmd Line, 1 Address Line and 4 Data Lines   */
+#define BSP_QSPI_SPI_4IO_MODE        (BSP_QSPI_Interface_t)MT25QL512ABB_SPI_4IO_MODE  /* 1 Cmd Line, 4 Address Lines and 4 Data Lines  */
+#define BSP_QSPI_DPI_MODE            (BSP_QSPI_Interface_t)MT25QL512ABB_DPI_MODE      /* 2 Cmd Lines, 2 Address Lines and 2 Data Lines */
+#define BSP_QSPI_QPI_MODE            (BSP_QSPI_Interface_t)MT25QL512ABB_QPI_MODE      /* 4 Cmd Lines, 4 Address Lines and 4 Data Lines */
 
 /* Definition for QSPI transfer rates */
-#define BSP_QSPI_STR_TRANSFER        (BSP_QSPI_Transfer_t)MT25TL01G_STR_TRANSFER /* Single Transfer Rate */
-#define BSP_QSPI_DTR_TRANSFER        (BSP_QSPI_Transfer_t)MT25TL01G_DTR_TRANSFER /* Double Transfer Rate */
+#define BSP_QSPI_STR_TRANSFER        (BSP_QSPI_Transfer_t)MT25QL512ABB_STR_TRANSFER /* Single Transfer Rate */
+#define BSP_QSPI_DTR_TRANSFER        (BSP_QSPI_Transfer_t)MT25QL512ABB_DTR_TRANSFER /* Double Transfer Rate */
 
 /* Definition for QSPI dual flash mode */
-#define BSP_QSPI_DUALFLASH_DISABLE   (BSP_QSPI_DualFlash_t)MT25TL01G_DUALFLASH_DISABLE   /* Dual flash mode enabled  */
+#define BSP_QSPI_DUALFLASH_DISABLE   (BSP_QSPI_DualFlash_t)MT25QL512ABB_DUALFLASH_DISABLE   /* Dual flash mode enabled  */
+#define BSP_QSPI_DUALFLASH_ENABLE   (BSP_QSPI_DualFlash_t)MT25QL512ABB_DUALFLASH_ENABLE   /* Dual flash mode enabled  */
 /* Definition for QSPI Flash ID */
 #define BSP_QSPI_FLASH_ID            QSPI_FLASH_ID_1
 
 /* QSPI block sizes for dual flash */
-#define BSP_QSPI_BLOCK_8K            MT25TL01G_SECTOR_4K
-#define BSP_QSPI_BLOCK_64K           MT25TL01G_BLOCK_32K
-#define BSP_QSPI_BLOCK_128K          MT25TL01G_BLOCK_64K
+#define BSP_QSPI_BLOCK_8K            MT25QL512ABB_SUBSECTOR_4K
+#define BSP_QSPI_BLOCK_64K           MT25QL512ABB_SUBSECTOR_32K
+#define BSP_QSPI_BLOCK_128K          MT25QL512ABB_SECTOR_64K
+
+/* QSPI address bytes */
+#define BSP_QSPI_ADDSIZE_3BYTES        (BSP_QSPI_AddSize_t)MT25QL512ABB_3BYTES_SIZE /* Single Transfer Rate */
+#define BSP_QSPI_ADDSIZE_4BYTES        (BSP_QSPI_AddSize_t)MT25QL512ABB_4BYTES_SIZE /* Double Transfer Rate */
+
 
 /* Definition for QSPI clock resources */
 #define QSPI_CLK_ENABLE()              __HAL_RCC_QSPI_CLK_ENABLE()
@@ -178,13 +185,30 @@ typedef struct
 #define QSPI_BK2_D3_GPIO_PORT      GPIOG
 
 
-/* MT25TL01G Micron memory */
-/* Size of the flash */
-#define QSPI_FLASH_SIZE            26     /* Address bus width to access whole memory space */
-#define QSPI_PAGE_SIZE             256
+
+
+// QSPI和External flash的全局配置
+#define BSP_DF_MODE               BSP_QSPI_DUALFLASH_ENABLE  // Dual flash mode
+#define BSP_IT_MODE               BSP_QSPI_QPI_MODE          // SPI Mode
+#define BSP_TF_RATE               BSP_QSPI_STR_TRANSFER      // Transfer mode
+#define BSP_ADD_BYTE              BSP_QSPI_ADDSIZE_4BYTES    // Address mode
+
+
+/* MT25QL512ABB Micron memory 64M Bytes, Dual flash need *2 */
+#define QSPI_FLASH_SIZE_BYTE       (MT25QL512ABB_FLASH_SIZE << (BSP_DF_MODE == BSP_QSPI_DUALFLASH_ENABLE ? 1 : 0))
+
+// Address size need 27bit
+#define QSPI_FLASH_SIZE_ADDR       26  // 2^(26+1) = 128 * 1024 * 1024, 0 <-----> 0x7FF FFFF
+
+
+#define QSPI_PAGE_SIZE             (MT25QL512ABB_PAGE_SIZE << (BSP_DF_MODE == BSP_QSPI_DUALFLASH_ENABLE ? 1 : 0))
 
 /* QSPI Base Address */
-#define QSPI_BASE_ADDRESS          0x90000000
+#define QSPI_BASE_ADDRESS          0x90000000   // 内存映射模式使用
+
+#define QSPI_FLASH_ADDMAX          ((uint32_t)0x7FFFFFFU) // (((uint32_t)1U << QSPI_FLASH_SIZE_ADDR) - 1U)
+
+
 
 /**
   * @}

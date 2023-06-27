@@ -226,38 +226,3 @@ void user_shellprintf(char *str)
     shellPrint(&shell, "%s", str);
 }
 
-//-----------------------------------------------------------------------------------
-//
-// 用于测试shell的临时函数
-//
-int math_add(int a, int b)
-{
-    return (a+b);
-}
-
-SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 math_add, math_add, math add func);
-
-
-void hello(char *str)
-{
-    if (str != NULL && *str != '\0') {
-        shellPrint(&shell, "%s", str);
-    }
-    //return 0;
-}
-
-SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 hello, hello, hello word);
-
-
-
-
-
-
-
-
-
-
-
-

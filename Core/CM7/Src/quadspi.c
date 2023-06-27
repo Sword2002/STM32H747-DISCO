@@ -19,50 +19,31 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "quadspi.h"
-#include "stm32h747i_discovery_qspi.h"
+//#include "stm32h747i_discovery_qspi.h"
+#include "stm32h747i_discovery_mt25ql_qspi.h"
+//#include "mt25tl01g/mt25tl01g.h"
 #include "mt25ql512abb/mt25ql512abb.h"
 #include "shell_port.h"
 #include <string.h>
 #include "stdio.h"
 
-#define QSPI_BK2_IO2_Pin GPIO_PIN_9
-#define QSPI_BK2_IO2_GPIO_Port GPIOG
-#define QSPI_BK2_IO3_Pin GPIO_PIN_14
-#define QSPI_BK2_IO3_GPIO_Port GPIOG
-#define QSPI_BK1_NCS_Pin GPIO_PIN_6
-#define QSPI_BK1_NCS_GPIO_Port GPIOG
-#define QSPI_BK1_IO3_Pin GPIO_PIN_6
-#define QSPI_BK1_IO3_GPIO_Port GPIOF
-#define QSPI_BK1_IO2_Pin GPIO_PIN_7
-#define QSPI_BK1_IO2_GPIO_Port GPIOF
-#define QSPI_BK1_IO1_Pin GPIO_PIN_9
-#define QSPI_BK1_IO1_GPIO_Port GPIOF
-#define QSPI_BK2_IO0_Pin GPIO_PIN_2
-#define QSPI_BK2_IO0_GPIO_Port GPIOH
-#define QSPI_BK2_IO1_Pin GPIO_PIN_3
-#define QSPI_BK2_IO1_GPIO_Port GPIOH
-#define QSPI_CLK_Pin GPIO_PIN_2
-#define QSPI_CLK_GPIO_Port GPIOB
-#define QSPI_BK1_IO0_Pin GPIO_PIN_11
-#define QSPI_BK1_IO0_GPIO_Port GPIOD
 
+#define QSPI_BST_SHELLTEST_EN 0
 
-
+extern QSPI_HandleTypeDef hqspi;
 
 /* QUADSPI init function */
 void MX_QUADSPI_Init(void)
 {
-  BSP_QSPI_Init_t Init;
-  Init.InterfaceMode = BSP_QSPI_QPI_MODE;
-  Init.TransferRate = BSP_QSPI_STR_TRANSFER;
-  Init.DualFlashMode = BSP_QSPI_DUALFLASH_ENABLE;
-
-  if (BSP_QSPI_Init(0, &Init) != BSP_ERROR_NONE)
-  {
-    Error_Handler();
-  }
+  BSP_QSPI_Init_t init ;
+  init.InterfaceMode = BSP_IT_MODE;
+  init.TransferRate = BSP_TF_RATE;
+  init.DualFlashMode = BSP_DF_MODE;
+  /* Initialize the QSPI */
+  BSP_QSPI_Init(0,&init);
 }
 
+// 自定义HAL层的MsInit
 void HAL_QSPI_MspInit(QSPI_HandleTypeDef* qspiHandle)
 {
 
@@ -85,6 +66,8 @@ void HAL_QSPI_MspInit(QSPI_HandleTypeDef* qspiHandle)
 
     /* QUADSPI clock enable */
     __HAL_RCC_QSPI_CLK_ENABLE();
+    __HAL_RCC_QSPI_FORCE_RESET();
+    __HAL_RCC_QSPI_RELEASE_RESET();
 
     __HAL_RCC_GPIOG_CLK_ENABLE();
     __HAL_RCC_GPIOF_CLK_ENABLE();
@@ -103,54 +86,54 @@ void HAL_QSPI_MspInit(QSPI_HandleTypeDef* qspiHandle)
     PB2     ------> QUADSPI_CLK
     PD11     ------> QUADSPI_BK1_IO0
     */
-    GPIO_InitStruct.Pin = QSPI_BK2_IO2_Pin|QSPI_BK2_IO3_Pin;
+    GPIO_InitStruct.Pin = QSPI_BK2_D2_PIN|QSPI_BK2_D3_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF9_QUADSPI;
     HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = QSPI_BK1_NCS_Pin;
+    GPIO_InitStruct.Pin = QSPI_BK1_CS_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF10_QUADSPI;
-    HAL_GPIO_Init(QSPI_BK1_NCS_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = QSPI_BK1_IO3_Pin|QSPI_BK1_IO2_Pin;
+    GPIO_InitStruct.Pin = QSPI_BK1_D2_PIN|QSPI_BK1_D3_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF9_QUADSPI;
     HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = QSPI_BK1_IO1_Pin;
+    GPIO_InitStruct.Pin = QSPI_BK1_D1_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF10_QUADSPI;
-    HAL_GPIO_Init(QSPI_BK1_IO1_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = QSPI_BK2_IO0_Pin|QSPI_BK2_IO1_Pin;
+    GPIO_InitStruct.Pin = QSPI_BK2_D0_PIN|QSPI_BK2_D1_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF9_QUADSPI;
     HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = QSPI_CLK_Pin;
+    GPIO_InitStruct.Pin = QSPI_CLK_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF9_QUADSPI;
-    HAL_GPIO_Init(QSPI_CLK_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = QSPI_BK1_IO0_Pin;
+    GPIO_InitStruct.Pin = QSPI_BK1_D0_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF9_QUADSPI;
-    HAL_GPIO_Init(QSPI_BK1_IO0_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
     /* QUADSPI interrupt Init */
     HAL_NVIC_SetPriority(QUADSPI_IRQn, 15, 0);
@@ -161,13 +144,14 @@ void HAL_QSPI_MspInit(QSPI_HandleTypeDef* qspiHandle)
   }
 }
 
+// 自定义HAL层的MsDeInit
 void HAL_QSPI_MspDeInit(QSPI_HandleTypeDef* qspiHandle)
 {
-
   if(qspiHandle->Instance==QUADSPI)
   {
   /* USER CODE BEGIN QUADSPI_MspDeInit 0 */
-
+    __HAL_RCC_QSPI_FORCE_RESET();
+    __HAL_RCC_QSPI_RELEASE_RESET();
   /* USER CODE END QUADSPI_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_QSPI_CLK_DISABLE();
@@ -184,15 +168,15 @@ void HAL_QSPI_MspDeInit(QSPI_HandleTypeDef* qspiHandle)
     PB2     ------> QUADSPI_CLK
     PD11     ------> QUADSPI_BK1_IO0
     */
-    HAL_GPIO_DeInit(GPIOG, QSPI_BK2_IO2_Pin|QSPI_BK2_IO3_Pin|QSPI_BK1_NCS_Pin);
+    HAL_GPIO_DeInit(GPIOG, QSPI_BK2_D2_PIN|QSPI_BK2_D3_PIN|QSPI_BK1_CS_PIN);
 
-    HAL_GPIO_DeInit(GPIOF, QSPI_BK1_IO3_Pin|QSPI_BK1_IO2_Pin|QSPI_BK1_IO1_Pin);
+    HAL_GPIO_DeInit(GPIOF, QSPI_BK1_D3_PIN|QSPI_BK1_D2_PIN|QSPI_BK1_D1_PIN);
 
-    HAL_GPIO_DeInit(GPIOH, QSPI_BK2_IO0_Pin|QSPI_BK2_IO1_Pin);
+    HAL_GPIO_DeInit(GPIOH, QSPI_BK2_D0_PIN|QSPI_BK2_D1_PIN);
 
-    HAL_GPIO_DeInit(QSPI_CLK_GPIO_Port, QSPI_CLK_Pin);
+    HAL_GPIO_DeInit(GPIOB, QSPI_CLK_PIN);
 
-    HAL_GPIO_DeInit(QSPI_BK1_IO0_GPIO_Port, QSPI_BK1_IO0_Pin);
+    HAL_GPIO_DeInit(GPIOD, QSPI_BK1_D0_PIN);
 
     /* QUADSPI interrupt Deinit */
     HAL_NVIC_DisableIRQ(QUADSPI_IRQn);
@@ -202,8 +186,10 @@ void HAL_QSPI_MspDeInit(QSPI_HandleTypeDef* qspiHandle)
   }
 }
 
-
-/* "stm32h747i_discovery_qspi.h" 提供的可用接口
+#if (QSPI_BST_SHELLTEST_EN == 1)
+/*
+* ---------------------- BSP Functions testing with shell ------------------------------------
+* BSP interface:
 *
 int32_t BSP_QSPI_Read(uint32_t Instance, uint8_t *pData, uint32_t ReadAddr, uint32_t Size);
 int32_t BSP_QSPI_Write(uint32_t Instance, uint8_t *pData, uint32_t WriteAddr, uint32_t Size);
@@ -218,39 +204,114 @@ int32_t BSP_QSPI_ConfigFlash(uint32_t Instance, BSP_QSPI_Interface_t Mode, BSP_Q
 *
 */
 
-void EXTFLASH_Test_Write(void)
+// 测试写到External flash
+// 1. 选择从0地址开始 或从结尾-8开始
+void EXTFLASH_Test_Write(uint8_t addLocal)
 {
   int32_t ret = BSP_ERROR_NONE;
   uint8_t data[8] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88};
-  ret = BSP_QSPI_Write(0, data, QSPI_BASE_ADDRESS, 8);
+
+  if (addLocal == 1U) {
+    ret = BSP_QSPI_Write(0, data, (QSPI_FLASH_ADDMAX - 8), 8);
+  } else {
+    ret = BSP_QSPI_Write(0, data, 0, 8);
+  }
   
   char buff[64];
-  sprintf(buff, "QSPI Write test result = %d.\n\r", ret);
+  sprintf(buff, "Write external flash test result = %d.\n\r", ret);
   user_shellprintf(buff);
 }
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 QSPIW, EXTFLASH_Test_Write, external flash write test);
+                 efwrite, EXTFLASH_Test_Write, external flash write test);
+
+
+// 测试从External flash读取数据
+// 1. 选择从0地址开始 或从结尾-8开始
+void EXTFLASH_Test_Read(uint8_t addLocal)
+{
+  int32_t ret = BSP_ERROR_NONE;
+  uint8_t data[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+  if (addLocal == 1U) {
+    ret = BSP_QSPI_Read(0, data, (QSPI_FLASH_ADDMAX - 8), 8);
+  } else {
+    ret = BSP_QSPI_Read(0, data, 0, 8);
+  }
+  
+  char buff[64];
+  sprintf(buff, "Read external flash: result=%d\n\r", ret);
+  user_shellprintf(buff);
+  for (int8_t i = 0; i < 8; i++) {
+    sprintf(buff, "Date[%d]=0x%02X.\n\r", i, data[i]);
+    user_shellprintf(buff);
+  }
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 efread, EXTFLASH_Test_Read, external flash read test);
+
+// 擦除BLOCK接口测试
+// 1.Block的序号
+// 2.选择Block的Size
+void EXTFLASH_Test_BlockErase(uint32_t BlockAddress, uint8_t Size)
+{
+  int32_t ret = BSP_ERROR_NONE;
+  if (Size == 1) {
+    ret = BSP_QSPI_EraseBlock(0, BlockAddress, BSP_QSPI_ERASE_64K);
+  } else if (Size == 2) {
+    ret = BSP_QSPI_EraseBlock(0, BlockAddress, BSP_QSPI_ERASE_128K);
+  } else {
+    ret = BSP_QSPI_EraseBlock(0, BlockAddress, BSP_QSPI_ERASE_8K);
+  }
+
+  char buff[64];
+  sprintf(buff, "Erase block: result=%d\n\r", ret);
+  user_shellprintf(buff);
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 eferaseb, EXTFLASH_Test_BlockErase, external flash block erase);
+
+
+// 擦除整片接口测试
+void EXTFLASH_Test_ChipErase(void)
+{
+  int32_t ret = BSP_ERROR_NONE;
+  ret = BSP_QSPI_EraseChip(0);
+  
+  char buff[64];
+  sprintf(buff, "Erase chip: result=%d\n\r", ret);
+  user_shellprintf(buff);
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 eferasec, EXTFLASH_Test_ChipErase, external flash chip erase);
 
 
 // 通过QSPI读取FLASH地址数据
-void EXTFLASH_Test_Read(void)
+// Dual flash mode have 6 Bytes
+void EXTFLASH_Test_ReadID(void)
 {
+  int8_t i;
   int32_t ret = BSP_ERROR_NONE;
-  uint8_t data[8];
-  ret = BSP_QSPI_Read(0, data, QSPI_BASE_ADDRESS, 8);
-  
+  uint8_t data[8]={0};
   char buff[64];
-  sprintf(buff, "QSPI Read test result = %d, d0=%d.\n\r", ret, data[0]);
+
+  ret = MT25QL512ABB_ReadID(&hqspi, BSP_QSPI_QPI_MODE, data, BSP_DF_MODE);
+  
+  sprintf(buff, "QSPI Read the flash ID:result=%d\n\r", ret);
   user_shellprintf(buff);
+  for (i = 0; i < 6; i++) {
+    sprintf(buff, "Date[%d]=0x%02X.\n\r", i, data[i]);
+    user_shellprintf(buff);
+  }
 }
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 QSPIR, EXTFLASH_Test_Read, external flash write test);
+                 efid, EXTFLASH_Test_ReadID, Read external flash ID);
 
 
 // 获取FLASH的配置信息
-void EXTFLASH_Test_ReadInd(void)
+void EXTFLASH_Test_ReadInfo(void)
 {
   BSP_QSPI_Info_t pInfo;
+  //MT25QL512ABB_GetFlashInfo(&pInfo);
   MT25QL512ABB_GetFlashInfo(&pInfo);
   
   char buff[128];
@@ -262,19 +323,42 @@ void EXTFLASH_Test_ReadInd(void)
   user_shellprintf(buff);
 }
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 eflashi, EXTFLASH_Test_ReadInd, external flash information);
+                 efinfo, EXTFLASH_Test_ReadInfo, Read external flash information);
 
 
 // 通过QSPI读取FLASH地址数据
 void EXTFLASH_Test_ReadStatus(void)
 {
-  int32_t ret = 0;
- ret = BSP_QSPI_GetStatus(0);
-  
+  int8_t i;
+  int32_t ret = BSP_ERROR_NONE;
+  uint8_t data[8]={0,0,0,0,0,0,0,0};
   char buff[64];
-  sprintf(buff, "Read flash status result = %d \n\r", ret);
+
+  ret = MT25QL512ABB_ReadStatusRegister(&hqspi, BSP_QSPI_QPI_MODE, BSP_DF_MODE, data);
+  
+  sprintf(buff, "QSPI Read the flash status:result=%d\n\r", ret);
+  user_shellprintf(buff);
+  for (i = 0; i < 8; i++) {
+    sprintf(buff, "Date[%d]=0x%02X.\n\r", i, data[i]);
+    user_shellprintf(buff);
+  }
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 efstatus, EXTFLASH_Test_ReadStatus, external flash status);
+
+
+// 测试POSITION_VAL()这个宏
+void MACRO_Test_Val(uint32_t data)
+{
+  uint8_t ret = POSITION_VAL(data);
+
+  char buff[64];
+  sprintf(buff, "Val result = %d\n\r", ret);
   user_shellprintf(buff);
 }
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 eflashs, EXTFLASH_Test_ReadStatus, external flash status);
+                 mval, MACRO_Test_Val, Macro val test);
 
+#endif
+
+// -------- end of file -------

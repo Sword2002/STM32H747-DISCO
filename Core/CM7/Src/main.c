@@ -46,6 +46,7 @@ static void CPU_CACHE_Enable(void);
 
 
 int32_t Cm7RunCnt = 0;
+uint8_t Cm4SysTout = 0U;
 
 extern void osTaskInit(void);
 /**
@@ -64,9 +65,8 @@ int main(void)
   CPU_CACHE_Enable();
 
   timeout = 0xFFFF;
-  while((__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) != RESET) && (timeout-- > 0));
-  if ( timeout < 0 )
-  {
+  while((__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) != RESET) && (timeout-- > 0)){;}
+  if ( timeout < 0 ) {
     Error_Handler();
   }
 
@@ -98,9 +98,8 @@ int main(void)
 
   /* wait until CPU2 wakes up from stop mode */
   timeout = 0xFFFF;
-  while((__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) == RESET) && (timeout-- > 0));
-  if ( timeout < 0 )
-  {
+  while((__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) == RESET) && (timeout-- > 0)){;}
+  if ( timeout < 0 ) {
     Error_Handler();
   }
 
@@ -114,13 +113,15 @@ int main(void)
   MX_TIM2_Init();
   MX_GPIO_Init();
   MX_USART1_UART_Init();
-  //MX_QUADSPI_Init();
+  MX_QUADSPI_Init();
 
   /* Add Cortex-M7 user application code here */ 
 
   /* CM7 waits for CM4 to finish his task and HW semaphore 0 becomes taken */
-  while(HAL_HSEM_IsSemTaken(HSEM_ID_0) == 0)
-  {
+  timeout = 0xFFFF;
+  while((HAL_HSEM_IsSemTaken(HSEM_ID_0) == 0) && (timeout-- > 0)){;}
+  if ( timeout < 0 ) {
+    Cm4SysTout = 0xFFU;
   }
 
   /* Add CM7 Job here */

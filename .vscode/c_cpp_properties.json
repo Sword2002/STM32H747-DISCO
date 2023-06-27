@@ -11,6 +11,7 @@
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32H7xx/Include",
                 "${workspaceFolder}/Drivers/CMSIS/Include",
                 "${workspaceFolder}/Drivers/BSP",
+                "${workspaceFolder}/Drivers/Components",
                 "${workspaceFolder}/Drivers/Components/is42s32800j",
                 "${workspaceFolder}/RTOS/FreeRTOS/include",
                 "${workspaceFolder}/RTOS/FreeRTOS/portable/IAR/ARM_CM7/r0p1",
