@@ -2985,6 +2985,9 @@
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c_ex.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mdma.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pcd.c</name>
             </file>
             <file>
@@ -3047,6 +3050,21 @@
         </file>
         <file>
             <name>$PROJ_DIR$\startup_stm32h747xx_CM7.s</name>
+        </file>
+    </group>
+    <group>
+        <name>FS</name>
+        <group>
+            <name>littlefs</name>
+            <file>
+                <name>$PROJ_DIR$\..\FS\littlefs\lfs.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\FS\littlefs\lfs_util.c</name>
+            </file>
+        </group>
+        <file>
+            <name>$PROJ_DIR$\..\FS\fsport.c</name>
         </file>
     </group>
     <group>

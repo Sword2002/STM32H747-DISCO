@@ -16,7 +16,9 @@
                 "${workspaceFolder}/RTOS/FreeRTOS/include",
                 "${workspaceFolder}/RTOS/FreeRTOS/portable/IAR/ARM_CM7/r0p1",
                 "${workspaceFolder}/SHELL/src",
-                "${workspaceFolder}/SHELL/port"
+                "${workspaceFolder}/SHELL/port",
+                "${workspaceFolder}/FS",
+                "${workspaceFolder}/FS/littlefs"
             ],
             "defines": [
                 "CORE_CM7",

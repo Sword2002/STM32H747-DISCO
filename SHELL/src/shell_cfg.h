@@ -211,7 +211,7 @@
 /**
  * @brief 是否显示shell信息
  */
-#define     SHELL_SHOW_INFO             1
+#define     SHELL_SHOW_INFO             0
 #endif /** SHELL_SHOW_INFO */
 
 #ifndef SHELL_CLS_WHEN_LOGIN

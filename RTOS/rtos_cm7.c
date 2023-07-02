@@ -165,7 +165,7 @@ static void AppTaskCreate(void)
     taskENTER_CRITICAL();           //进入临界区
     BaseType_t result = pdFAIL;
 
-    // 最先创建打印任务
+    // 创建打印任务互斥信号量
     //xMutex_Uart1 = xSemaphoreCreateMutex();
 
     // 1.写缓存的任务Give信号量(通知); 2.打印专用任务Take信号量(有打印任务)
@@ -229,13 +229,11 @@ static void AppTaskCreate(void)
         xTimerStart(hSTimer1,1000);	// 等待1000tick后开启定时器
     }
 
-    vTaskDelete(AppTaskCreateHandle); //最后删除AppTaskCreate任务
-    printf2buffatinit("AppTaskCreate Delete Success\r\n");
-
-
     HAL_TIM_Base_Start(&htim2);
-  
-    taskEXIT_CRITICAL();            //退出临界区
+
+    printf2buffatinit("AppTaskCreate Delete Success\r\n");
+    vTaskDelete(AppTaskCreateHandle); //最后删除AppTaskCreate任务
+    taskEXIT_CRITICAL();              //退出临界区
 }
 
 

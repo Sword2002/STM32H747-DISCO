@@ -30,6 +30,7 @@
 #include "quadspi.h"
 #include "button.h"
 #include "shell_port.h"
+#include "fsapi.h"
 
 
 
@@ -127,6 +128,9 @@ int main(void)
   /* Add CM7 Job here */
   User_Shell_Init();
   ButtonAndJoykeyInit();
+
+  // 文件系统
+  //FileSystemIint();
 
   // LED 1 ON for 200 ms
   HAL_Delay(200); 

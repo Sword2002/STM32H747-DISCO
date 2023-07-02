@@ -28,7 +28,7 @@
 #include "stdio.h"
 
 
-#define QSPI_BST_SHELLTEST_EN 0
+#define QSPI_BST_SHELLTEST_EN 1        // 使能Shell进行FLASH的BSP层接口测试
 
 extern QSPI_HandleTypeDef hqspi;
 
@@ -213,6 +213,8 @@ void EXTFLASH_Test_Write(uint8_t addLocal)
 
   if (addLocal == 1U) {
     ret = BSP_QSPI_Write(0, data, (QSPI_FLASH_ADDMAX - 8), 8);
+  } else if (addLocal == 7U) {
+    ret = BSP_QSPI_Write(0, data, 0, 7); // 测试写奇数个
   } else {
     ret = BSP_QSPI_Write(0, data, 0, 8);
   }
@@ -234,6 +236,8 @@ void EXTFLASH_Test_Read(uint8_t addLocal)
 
   if (addLocal == 1U) {
     ret = BSP_QSPI_Read(0, data, (QSPI_FLASH_ADDMAX - 8), 8);
+  } else if (addLocal == 7U) {
+    ret = BSP_QSPI_Read(0, data, 0, 7); // 测试读奇数个
   } else {
     ret = BSP_QSPI_Read(0, data, 0, 8);
   }
@@ -252,15 +256,19 @@ SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC),
 // 擦除BLOCK接口测试
 // 1.Block的序号
 // 2.选择Block的Size
-void EXTFLASH_Test_BlockErase(uint32_t BlockAddress, uint8_t Size)
+void EXTFLASH_Test_BlockErase(uint32_t BlockId, uint8_t Size)
 {
+  if (BlockId >= BSP_FS_BLOCK_COUNT) {
+    return;
+  }
+
   int32_t ret = BSP_ERROR_NONE;
   if (Size == 1) {
-    ret = BSP_QSPI_EraseBlock(0, BlockAddress, BSP_QSPI_ERASE_64K);
+    ret = BSP_QSPI_EraseBlock(0, (BlockId * MT25QL512ABB_SUBSECTOR_32K * 2), BSP_QSPI_ERASE_64K);
   } else if (Size == 2) {
-    ret = BSP_QSPI_EraseBlock(0, BlockAddress, BSP_QSPI_ERASE_128K);
+    ret = BSP_QSPI_EraseBlock(0, (BlockId * MT25QL512ABB_SECTOR_64K * 2), BSP_QSPI_ERASE_128K);
   } else {
-    ret = BSP_QSPI_EraseBlock(0, BlockAddress, BSP_QSPI_ERASE_8K);
+    ret = BSP_QSPI_EraseBlock(0, (BlockId * MT25QL512ABB_SUBSECTOR_4K * 2), BSP_QSPI_ERASE_8K);
   }
 
   char buff[64];
@@ -358,6 +366,21 @@ void MACRO_Test_Val(uint32_t data)
 }
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
                  mval, MACRO_Test_Val, Macro val test);
+
+
+void EXTFLASH_Test_EnableMemoryMappedMode(void)
+{
+  BSP_QSPI_EnableMemoryMappedMode(0);
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 efmem, EXTFLASH_Test_EnableMemoryMappedMode, Enter Memory mode test);
+
+void EXTFLASH_Test_DisableMemoryMappedMode(void)
+{
+  BSP_QSPI_DisableMemoryMappedMode(0);
+}
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 efdmem, EXTFLASH_Test_DisableMemoryMappedMode, Exit Memory mode test);
 
 #endif
 

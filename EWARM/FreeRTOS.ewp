@@ -1422,6 +1422,8 @@
                     <state>$PROJ_DIR$/../RTOS/FreeRTOS/portable/IAR/ARM_CM7/r0p1</state>
                     <state>$PROJ_DIR$/../SHELL/src</state>
                     <state>$PROJ_DIR$/../SHELL/port</state>
+                    <state>$PROJ_DIR$/../FS</state>
+                    <state>$PROJ_DIR$/../FS/littlefs</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -2304,6 +2306,9 @@
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c_ex.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mdma.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pcd.c</name>
                 <excluded>
                     <configuration>FreeRTOS_CM7</configuration>
@@ -2403,6 +2408,24 @@
             <excluded>
                 <configuration>FreeRTOS_CM4</configuration>
             </excluded>
+        </file>
+    </group>
+    <group>
+        <name>FS</name>
+        <excluded>
+            <configuration>FreeRTOS_CM4</configuration>
+        </excluded>
+        <group>
+            <name>littlefs</name>
+            <file>
+                <name>$PROJ_DIR$\..\FS\littlefs\lfs.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\FS\littlefs\lfs_util.c</name>
+            </file>
+        </group>
+        <file>
+            <name>$PROJ_DIR$\..\FS\fsport.c</name>
         </file>
     </group>
     <group>

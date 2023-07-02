@@ -124,7 +124,7 @@ typedef struct
 
 /* Definition for QSPI dual flash mode */
 #define BSP_QSPI_DUALFLASH_DISABLE   (BSP_QSPI_DualFlash_t)MT25QL512ABB_DUALFLASH_DISABLE   /* Dual flash mode enabled  */
-#define BSP_QSPI_DUALFLASH_ENABLE   (BSP_QSPI_DualFlash_t)MT25QL512ABB_DUALFLASH_ENABLE   /* Dual flash mode enabled  */
+#define BSP_QSPI_DUALFLASH_ENABLE    (BSP_QSPI_DualFlash_t)MT25QL512ABB_DUALFLASH_ENABLE   /* Dual flash mode enabled  */
 /* Definition for QSPI Flash ID */
 #define BSP_QSPI_FLASH_ID            QSPI_FLASH_ID_1
 
@@ -194,19 +194,42 @@ typedef struct
 #define BSP_ADD_BYTE              BSP_QSPI_ADDSIZE_4BYTES    // Address mode
 
 
-/* MT25QL512ABB Micron memory 64M Bytes, Dual flash need *2 */
-#define QSPI_FLASH_SIZE_BYTE       (MT25QL512ABB_FLASH_SIZE << (BSP_DF_MODE == BSP_QSPI_DUALFLASH_ENABLE ? 1 : 0))
+#if (1)
 
-// Address size need 27bit
-#define QSPI_FLASH_SIZE_ADDR       26  // 2^(26+1) = 128 * 1024 * 1024, 0 <-----> 0x7FF FFFF
+    #define QSPI_FLASH_SIZE_ADDR      26                     // 2^(26+1) = 128 * 1024 * 1024, 0 <-----> 0x7FF FFFF
+    // 给文件系统提供块大小
+    #define BSP_FS_BLOCK_SIZE         8192                   // 2* MT25QL512ABB_SUBSECTOR_4K
+    #define QSPI_PAGE_SIZE            512                    // MT25QL512ABB_PAGE_SIZE
+
+    // 外部FLASH有多少Byte,考虑Dual Flash
+    #define QSPI_FLASH_SIZE_BYTE      0x8000000U             // 2* MT25QL512ABB_FLASH_SIZE
+    #define BSP_FS_BLOCK_COUNT        16384                  // QSPI_FLASH_SIZE_BYTE/BSP_FS_BLOCK_SIZE
+
+    // 定义外部FLASH的最大地址,要考虑Dual Flash
+    #define QSPI_FLASH_ADDMAX         ((uint32_t)0x7FFFFFEU) // Dual flash 模式地址需要保存偶数
+
+#else // 单片FLASH
+
+    #define QSPI_FLASH_SIZE_ADDR      25                      // 2^(25+1) = 64 * 1024 * 1024, 0 <-----> 0x3FF FFFF
+    #define BSP_FS_BLOCK_SIZE         4096                    // 4k
+    #define QSPI_PAGE_SIZE            256                     // 256Byte,MT25QL512ABB_PAGE_SIZE
+
+    // 外部FLASH有多少Byte,考虑Dual Flash
+    #define QSPI_FLASH_SIZE_BYTE      0x4000000U              // MT25QL512ABB_FLASH_SIZE
+    #define BSP_FS_BLOCK_COUNT        16384                   // QSPI_FLASH_SIZE_BYTE/BSP_FS_BLOCK_SIZE
+
+    // 定义外部FLASH的最大地址,要考虑Dual Flash
+    #define QSPI_FLASH_ADDMAX         ((uint32_t)0x3FFFFFFU)  // (((uint32_t)1U << QSPI_FLASH_SIZE_ADDR) - 1U)
+
+#endif
 
 
-#define QSPI_PAGE_SIZE             (MT25QL512ABB_PAGE_SIZE << (BSP_DF_MODE == BSP_QSPI_DUALFLASH_ENABLE ? 1 : 0))
+
+
 
 /* QSPI Base Address */
 #define QSPI_BASE_ADDRESS          0x90000000   // 内存映射模式使用
 
-#define QSPI_FLASH_ADDMAX          ((uint32_t)0x7FFFFFFU) // (((uint32_t)1U << QSPI_FLASH_SIZE_ADDR) - 1U)
 
 
 

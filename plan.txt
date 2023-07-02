@@ -31,10 +31,28 @@ STM32H747I-DISCO学习步骤：
 8. 集成shell调试器功能                             OK，shell集成遇到的问题：
     1). 按键响应问题，比如方向键(已经解决：任务内不能加延时)
 
-9. 集成文件系统
+9-1. 集成文件系统
+    1). 集成littlefs
+    2). 通过lfs，在FLASH上测试lfs的所有接口功能
+    3). 测试lfs性能
+    4). 尝试优化lfs性能(CSDN上有说lfs性能差)
+
+9-2. 集成文件系统
+    1). 集成fatfs
+    2). 通过fatfs，在FLASH上测试fatfs的所有接口功能
+    3). 测试fatfs性能
+    4). 尝试优化fatfs性能()
+
+9-3. 集成文件系统
+    1). 集成uc-fs
+    2). 通过uc-fs，在FLASH上测试uc-fs的所有接口功能
+    3). 测试uc-fs性能
+    4). 尝试优化uc-fs性能()
+    5). 对三个FS进行比较
+
 10. 在外扩FLASH上实现文件读写
-    1). 熟悉SPI/DSPI/QSPI
-    2). 通过QSPI对MT25QL实现读写
+    1). 熟悉SPI/DSPI/QSPI                         OK
+    2). 通过QSPI对MT25QL实现读写                   OK
     3). 优化QSPI的性能
 
 11. 在EEPROM上实现文件读写                         没有EEPROM
@@ -45,3 +63,4 @@ STM32H747I-DISCO学习步骤：
 15. CM4核移植FreeRTOS，创建一个LED任务             OK
 16. CM4集成USART2串口通讯，使能打印                OK,将接收的内容重新发送出来
 17. 内存保护单元（MPU）
+18. 实现USB
