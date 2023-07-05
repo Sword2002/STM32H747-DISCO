@@ -287,6 +287,9 @@ int32_t errFileClose(lfs_file_t* hFile)
     return (lfs_file_close(&lfs_ext_flash, hFile));
 }
 
+
+#if 0
+
 // 使用shell对littlefs的接口进行测试
 lfs_file_t *lfs_test_fhandle = NULL;
 
@@ -396,3 +399,4 @@ SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC),
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
                  fsread, LFS_TEST_Read, File system read a file);
 
+#endif

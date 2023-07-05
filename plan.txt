@@ -38,8 +38,8 @@ STM32H747I-DISCO学习步骤：
     4). 尝试优化lfs性能(CSDN上有说lfs性能差)
 
 9-2. 集成文件系统
-    1). 集成fatfs
-    2). 通过fatfs，在FLASH上测试fatfs的所有接口功能
+    1). 集成fatfs                                  OK
+    2). 通过fatfs，在FLASH上测试fatfs的所有接口功能  OK: open/close/read/write/mkdir/unlik
     3). 测试fatfs性能
     4). 尝试优化fatfs性能()
 

@@ -1424,6 +1424,7 @@
                     <state>$PROJ_DIR$/../SHELL/port</state>
                     <state>$PROJ_DIR$/../FS</state>
                     <state>$PROJ_DIR$/../FS/littlefs</state>
+                    <state>$PROJ_DIR$/../FS/fatfs</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -2416,7 +2417,25 @@
             <configuration>FreeRTOS_CM4</configuration>
         </excluded>
         <group>
+            <name>fatfs</name>
+            <file>
+                <name>$PROJ_DIR$\..\FS\fatfs\diskio.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\FS\fatfs\ff.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\FS\fatfs\ffsystem.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\FS\fatfs\ffunicode.c</name>
+            </file>
+        </group>
+        <group>
             <name>littlefs</name>
+            <excluded>
+                <configuration>FreeRTOS_CM7</configuration>
+            </excluded>
             <file>
                 <name>$PROJ_DIR$\..\FS\littlefs\lfs.c</name>
             </file>
@@ -2425,7 +2444,13 @@
             </file>
         </group>
         <file>
+            <name>$PROJ_DIR$\..\FS\fatfsport.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\FS\fsport.c</name>
+            <excluded>
+                <configuration>FreeRTOS_CM7</configuration>
+            </excluded>
         </file>
     </group>
     <group>

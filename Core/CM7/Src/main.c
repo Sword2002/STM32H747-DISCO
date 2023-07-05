@@ -31,7 +31,7 @@
 #include "button.h"
 #include "shell_port.h"
 #include "fsapi.h"
-
+#include "fatfsapi.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -130,7 +130,7 @@ int main(void)
   ButtonAndJoykeyInit();
 
   // 文件系统
-  //FileSystemIint();
+  FileSystemIint();
 
   // LED 1 ON for 200 ms
   HAL_Delay(200); 

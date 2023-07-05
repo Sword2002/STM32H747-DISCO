@@ -28,7 +28,7 @@
 #include "stdio.h"
 
 
-#define QSPI_BST_SHELLTEST_EN 1        // 使能Shell进行FLASH的BSP层接口测试
+#define QSPI_BST_SHELLTEST_EN 0        // 使能Shell进行FLASH的BSP层接口测试
 
 extern QSPI_HandleTypeDef hqspi;
 
@@ -223,8 +223,6 @@ void EXTFLASH_Test_Write(uint8_t addLocal)
   sprintf(buff, "Write external flash test result = %d.\n\r", ret);
   user_shellprintf(buff);
 }
-SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 efwrite, EXTFLASH_Test_Write, external flash write test);
 
 
 // 测试从External flash读取数据
@@ -250,8 +248,6 @@ void EXTFLASH_Test_Read(uint8_t addLocal)
     user_shellprintf(buff);
   }
 }
-SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 efread, EXTFLASH_Test_Read, external flash read test);
 
 // 擦除BLOCK接口测试
 // 1.Block的序号
@@ -289,9 +285,6 @@ void EXTFLASH_Test_ChipErase(void)
   sprintf(buff, "Erase chip: result=%d\n\r", ret);
   user_shellprintf(buff);
 }
-SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 eferasec, EXTFLASH_Test_ChipErase, external flash chip erase);
-
 
 // 通过QSPI读取FLASH地址数据
 // Dual flash mode have 6 Bytes
@@ -311,9 +304,6 @@ void EXTFLASH_Test_ReadID(void)
     user_shellprintf(buff);
   }
 }
-SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 efid, EXTFLASH_Test_ReadID, Read external flash ID);
-
 
 // 获取FLASH的配置信息
 void EXTFLASH_Test_ReadInfo(void)
@@ -330,8 +320,6 @@ void EXTFLASH_Test_ReadInfo(void)
           pInfo.ProgPageSize, pInfo.ProgPagesNumber);
   user_shellprintf(buff);
 }
-SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 efinfo, EXTFLASH_Test_ReadInfo, Read external flash information);
 
 
 // 通过QSPI读取FLASH地址数据
@@ -351,9 +339,6 @@ void EXTFLASH_Test_ReadStatus(void)
     user_shellprintf(buff);
   }
 }
-SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 efstatus, EXTFLASH_Test_ReadStatus, external flash status);
-
 
 // 测试POSITION_VAL()这个宏
 void MACRO_Test_Val(uint32_t data)
@@ -364,21 +349,44 @@ void MACRO_Test_Val(uint32_t data)
   sprintf(buff, "Val result = %d\n\r", ret);
   user_shellprintf(buff);
 }
-SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 mval, MACRO_Test_Val, Macro val test);
 
 
 void EXTFLASH_Test_EnableMemoryMappedMode(void)
 {
   BSP_QSPI_EnableMemoryMappedMode(0);
 }
-SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
-                 efmem, EXTFLASH_Test_EnableMemoryMappedMode, Enter Memory mode test);
 
 void EXTFLASH_Test_DisableMemoryMappedMode(void)
 {
   BSP_QSPI_DisableMemoryMappedMode(0);
 }
+
+
+
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 efwrite, EXTFLASH_Test_Write, external flash write test);
+
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 efread, EXTFLASH_Test_Read, external flash read test);
+
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 eferasec, EXTFLASH_Test_ChipErase, external flash chip erase);
+
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 efid, EXTFLASH_Test_ReadID, Read external flash ID);
+
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 efinfo, EXTFLASH_Test_ReadInfo, Read external flash information);
+
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 efstatus, EXTFLASH_Test_ReadStatus, external flash status);
+
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 mval, MACRO_Test_Val, Macro val test);
+
+SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
+                 efmem, EXTFLASH_Test_EnableMemoryMappedMode, Enter Memory mode test);
+
 SHELL_EXPORT_CMD(SHELL_CMD_PERMISSION(0)| SHELL_CMD_TYPE(SHELL_TYPE_CMD_FUNC), 
                  efdmem, EXTFLASH_Test_DisableMemoryMappedMode, Exit Memory mode test);
 

@@ -18,7 +18,8 @@
                 "${workspaceFolder}/SHELL/src",
                 "${workspaceFolder}/SHELL/port",
                 "${workspaceFolder}/FS",
-                "${workspaceFolder}/FS/littlefs"
+                "${workspaceFolder}/FS/littlefs",
+                "${workspaceFolder}/FS/fatfs"
             ],
             "defines": [
                 "CORE_CM7",
