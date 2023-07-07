@@ -127,13 +127,13 @@ extern UBaseType_t uxHighWaterMark[5];
 void vApplicationIdleHook( void )
 {
     char data = 0;
-    uint32_t buff[32] = {0}; // 用于测试任务堆栈使用
+    //uint32_t buff[32] = {0}; // 用于测试任务堆栈使用
     if (shell.read && shell.read(&data, 1) == 1)
     {
         shellHandler(&shell, data);
     }
-    buff[0] = uxTaskGetStackHighWaterMark( NULL );
-    uxHighWaterMark[3] = buff[0];
+    uxTaskGetStackHighWaterMark( NULL );
+    //uxHighWaterMark[3] = buff[0];
 }
 
 // shell任务放在RTOS的IDLE任务内运行,不需要单独创建任务

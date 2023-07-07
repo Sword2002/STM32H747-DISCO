@@ -2418,6 +2418,9 @@
         </excluded>
         <group>
             <name>fatfs</name>
+            <excluded>
+                <configuration>FreeRTOS_CM7</configuration>
+            </excluded>
             <file>
                 <name>$PROJ_DIR$\..\FS\fatfs\diskio.c</name>
             </file>
@@ -2433,9 +2436,6 @@
         </group>
         <group>
             <name>littlefs</name>
-            <excluded>
-                <configuration>FreeRTOS_CM7</configuration>
-            </excluded>
             <file>
                 <name>$PROJ_DIR$\..\FS\littlefs\lfs.c</name>
             </file>
@@ -2445,12 +2445,12 @@
         </group>
         <file>
             <name>$PROJ_DIR$\..\FS\fatfsport.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\FS\fsport.c</name>
             <excluded>
                 <configuration>FreeRTOS_CM7</configuration>
             </excluded>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\FS\littlefsport.c</name>
         </file>
     </group>
     <group>

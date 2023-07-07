@@ -10,6 +10,7 @@
         "mt25tl01g_conf.h": "c",
         "limits": "c",
         "type_traits": "c",
-        "shell_port.h": "c"
+        "shell_port.h": "c",
+        "typeinfo": "c"
     }
 }

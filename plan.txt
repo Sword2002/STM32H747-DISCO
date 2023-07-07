@@ -32,8 +32,8 @@ STM32H747I-DISCO学习步骤：
     1). 按键响应问题，比如方向键(已经解决：任务内不能加延时)
 
 9-1. 集成文件系统
-    1). 集成littlefs
-    2). 通过lfs，在FLASH上测试lfs的所有接口功能
+    1). 集成littlefs                               OK
+    2). 通过lfs，在FLASH上测试lfs的所有接口功能      OK
     3). 测试lfs性能
     4). 尝试优化lfs性能(CSDN上有说lfs性能差)
 

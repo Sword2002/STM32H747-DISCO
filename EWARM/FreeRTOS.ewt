@@ -3082,7 +3082,7 @@
             <name>$PROJ_DIR$\..\FS\fatfsport.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\FS\fsport.c</name>
+            <name>$PROJ_DIR$\..\FS\littlefsport.c</name>
         </file>
     </group>
     <group>
