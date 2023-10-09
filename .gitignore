@@ -2,7 +2,9 @@
 EWARM/FreeRTOS_CM4/
 EWARM/FreeRTOS_CM7/
 EWARM/settings/
-
+MDK/DebugConfig/
+MDK/Listings/
+MDK/Objects/
 # Prerequisites
 *.d
 

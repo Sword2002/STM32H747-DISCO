@@ -127,7 +127,7 @@ int main(void)
 
   /* Add CM7 Job here */
   User_Shell_Init();
-  ButtonAndJoykeyInit();
+  //ButtonAndJoykeyInit();
 
   // 文件系统
   FileSystemIint();
@@ -135,7 +135,6 @@ int main(void)
   // LED 1 ON for 200 ms
   HAL_Delay(200); 
   BSP_LED_Off(LED1); 
-
 
   osTaskInit();              // 创建RTOS任务
   /* Infinite loop */

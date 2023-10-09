@@ -230,6 +230,7 @@ static void AppTaskCreate(void)
     }
 
     HAL_TIM_Base_Start(&htim2);
+    ButtonAndJoykeyInit();
 
     printf2buffatinit("AppTaskCreate Delete Success\r\n");
     vTaskDelete(AppTaskCreateHandle); //最后删除AppTaskCreate任务

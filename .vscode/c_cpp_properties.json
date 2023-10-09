@@ -1,9 +1,9 @@
 {
-    "configurations": [
-        {
-            "name": "STM32H747",
-            "includePath": [
-                "${workspaceFolder}/Core/CM7/Inc",
+  "configurations": [
+    {
+      "name": "STM32H747",
+      "includePath": [
+        "${workspaceFolder}/Core/CM7/Inc",
                 "${workspaceFolder}/Core/Common/Inc",
                 "${workspaceFolder}/Drivers",
                 "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc",
@@ -20,14 +20,14 @@
                 "${workspaceFolder}/FS",
                 "${workspaceFolder}/FS/littlefs",
                 "${workspaceFolder}/FS/fatfs"
-            ],
-            "defines": [
-                "CORE_CM7",
-                "USE_HAL_DRIVER",
-                "STM32H747xx",
-                "__ICCARM__"
-            ],
-        }
-    ],
-    "version": 4
+      ],
+      "defines": [
+        "CORE_CM7",
+        "USE_HAL_DRIVER",
+        "STM32H747xx",
+        "__ICCARM__"
+      ],
+          }
+  ],
+  "version": 4
 }
