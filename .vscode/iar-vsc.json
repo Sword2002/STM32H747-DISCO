@@ -1,0 +1,18 @@
+{
+  "workspace": {
+    "path": "${workspaceFolder}\\EWARM\\Project.eww"
+  },
+  "workspaces": {
+    "${workspaceFolder}\\EWARM\\Project.eww": {
+      "configs": {
+        "${workspaceFolder}\\EWARM\\FreeRTOS.ewp": "FreeRTOS_CM7"
+      },
+      "selected": {
+        "path": "${workspaceFolder}\\EWARM\\FreeRTOS.ewp"
+      }
+    }
+  },
+  "workbench": {
+    "path": "d:\\\\Program Files\\\\IAR Systems\\\\Embedded Workbench 9.2"
+  }
+}

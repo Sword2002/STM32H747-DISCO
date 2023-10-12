@@ -129,6 +129,31 @@ static void LED_Task(void* parameter)
     }
 }
 
+/***********************************************************************
+  * @ 功能说明： 和RTOS有关的变量集中创建
+  * @ 参数    ： 无  
+  * @ 返回值  ： 无
+  * @ 注意    ： 这些变量的创建要在OS初始化、调用这些变量的任务之前完成
+  **********************************************************************/
+void osAppVariableCreate(void)
+{
+    // 创建打印任务互斥信号量
+    //xMutex_Uart1 = xSemaphoreCreateMutex();
+
+    // 1.写缓存的任务Give信号量(通知); 2.打印专用任务Take信号量(有打印任务)
+    xSemphr_Printf = xSemaphoreCreateBinary();
+
+    // 消息队列,打印的内容通过消息队列传递给打印任务
+    xQueue_Printf = xQueueCreate(4, sizeof(char)*64); // 消息队列长度是4，每个消息可以发送64个字符
+
+    // 消息队列,打印的内容通过消息队列传递给打印任务
+    xQueue_PB = xQueueCreate(2, sizeof(void *));      // 消息队列长度是2，消息发送的是缓存地址
+
+    // 事件组, bit0:Wakeup key, bit1:Joy SET
+    xEvent_eFlag = xEventGroupCreate();
+}
+
+
 /*****************************************************************
   * @brief  任务创建管理函数
   * @param  无
@@ -164,21 +189,6 @@ static void AppTaskCreate(void)
 {
     taskENTER_CRITICAL();           //进入临界区
     BaseType_t result = pdFAIL;
-
-    // 创建打印任务互斥信号量
-    //xMutex_Uart1 = xSemaphoreCreateMutex();
-
-    // 1.写缓存的任务Give信号量(通知); 2.打印专用任务Take信号量(有打印任务)
-    xSemphr_Printf = xSemaphoreCreateBinary();
-
-    // 消息队列,打印的内容通过消息队列传递给打印任务
-    xQueue_Printf = xQueueCreate(4, sizeof(char)*64); // 消息队列长度是4，每个消息可以发送64个字符
-
-    // 消息队列,打印的内容通过消息队列传递给打印任务
-    xQueue_PB = xQueueCreate(2, sizeof(void *));      // 消息队列长度是2，消息发送的是缓存地址
-
-    // 事件组, bit0:Wakeup key, bit1:Joy SET
-    xEvent_eFlag = xEventGroupCreate();
 
     result = xTaskCreate( (TaskFunction_t )RTOS_DebugPrintTask,
                           (const char*    )"PrintfTask",
@@ -229,8 +239,8 @@ static void AppTaskCreate(void)
         xTimerStart(hSTimer1,1000);	// 等待1000tick后开启定时器
     }
 
-    HAL_TIM_Base_Start(&htim2);
-    ButtonAndJoykeyInit();
+    //HAL_TIM_Base_Start(&htim2);
+    //ButtonAndJoykeyInit();
 
     printf2buffatinit("AppTaskCreate Delete Success\r\n");
     vTaskDelete(AppTaskCreateHandle); //最后删除AppTaskCreate任务

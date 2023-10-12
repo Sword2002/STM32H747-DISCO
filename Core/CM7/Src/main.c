@@ -50,6 +50,8 @@ int32_t Cm7RunCnt = 0;
 uint8_t Cm4SysTout = 0U;
 
 extern void osTaskInit(void);
+extern void osAppVariableCreate(void);
+
 /**
   * @brief  The application entry point.
   * @retval int
@@ -104,6 +106,9 @@ int main(void)
     Error_Handler();
   }
 
+  // 和RTOS有关的变量集中创建
+  osAppVariableCreate();
+  
   /* Initialize LED 1 */
   BSP_LED_Init(LED1);
   BSP_LED_Init(LED2);
@@ -127,7 +132,7 @@ int main(void)
 
   /* Add CM7 Job here */
   User_Shell_Init();
-  //ButtonAndJoykeyInit();
+  ButtonAndJoykeyInit();
 
   // 文件系统
   FileSystemIint();

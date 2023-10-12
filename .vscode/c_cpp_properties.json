@@ -1,25 +1,9 @@
 {
   "configurations": [
     {
-      "name": "STM32H747",
+      "name": "windows-gcc-x64",
       "includePath": [
-        "${workspaceFolder}/Core/CM7/Inc",
-                "${workspaceFolder}/Core/Common/Inc",
-                "${workspaceFolder}/Drivers",
-                "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc",
-                "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc/Legacy",
-                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32H7xx/Include",
-                "${workspaceFolder}/Drivers/CMSIS/Include",
-                "${workspaceFolder}/Drivers/BSP",
-                "${workspaceFolder}/Drivers/Components",
-                "${workspaceFolder}/Drivers/Components/is42s32800j",
-                "${workspaceFolder}/RTOS/FreeRTOS/include",
-                "${workspaceFolder}/RTOS/FreeRTOS/portable/IAR/ARM_CM7/r0p1",
-                "${workspaceFolder}/SHELL/src",
-                "${workspaceFolder}/SHELL/port",
-                "${workspaceFolder}/FS",
-                "${workspaceFolder}/FS/littlefs",
-                "${workspaceFolder}/FS/fatfs"
+        "${workspaceFolder}/**"
       ],
       "defines": [
         "CORE_CM7",
@@ -27,7 +11,11 @@
         "STM32H747xx",
         "__ICCARM__"
       ],
-          }
+      "cStandard": "${default}",
+      "cppStandard": "${default}",
+      "compilerPath": "C:/mingw64/bin/gcc.exe",
+      "intelliSenseMode": "windows-gcc-x64"
+    }
   ],
   "version": 4
 }

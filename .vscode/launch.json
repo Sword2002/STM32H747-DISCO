@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/dev/STM32H747-DISCO/RTOS",
-      "program": "d:/dev/STM32H747-DISCO/RTOS/build/Debug/outDebug",
+      "cwd": "d:/dev/STM32H747-DISCO/Drivers/STM32H7xx_HAL_Driver/Src",
+      "program": "d:/dev/STM32H747-DISCO/Drivers/STM32H7xx_HAL_Driver/Src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
